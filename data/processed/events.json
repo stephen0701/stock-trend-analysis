@@ -1,5 +1,5 @@
 {
-  "updated": "2026-06-05 15:58",
+  "updated": "2026-06-05 16:20",
   "stocks": {
     "NVDA": {
       "price_events": [
@@ -72,8 +72,8 @@
         {
           "date": "2026-06-05",
           "type": "price",
-          "pct": -4.8,
-          "title": "單日大跌 4.8%"
+          "pct": -4.7,
+          "title": "單日大跌 4.7%"
         }
       ],
       "news": [
@@ -87,66 +87,66 @@
           "publisher": "Yahoo Finance"
         },
         {
-          "title": "What Is the Vanguard Utilities ETF, and Who Should Buy It?",
-          "sent": "neu",
-          "sentLabel": "中性",
-          "reason": "一般報導,無明顯多空訊息",
-          "date": "2026-06-05",
-          "url": "https://www.fool.com/investing/2026/06/05/what-is-the-vanguard-utilities-etf-and-why-buy/",
-          "publisher": "Motley Fool"
-        },
-        {
-          "title": "The S&P 500 Snubs SpaceX as Elon Musk Describes a Coming ‘Massive Growth Phase’",
-          "sent": "neu",
-          "sentLabel": "中性",
-          "reason": "一般報導,無明顯多空訊息",
-          "date": "2026-06-05",
-          "url": "https://247wallst.com/investing/2026/06/05/the-sp-500-snubs-spacex-as-elon-musk-describes-a-coming-massive-growth-phase/",
-          "publisher": "24/7 Wall St."
-        },
-        {
-          "title": "Stocks fall as strong jobs data fuels rate hike bets; oil set for weekly gain",
+          "title": "Top Midday Stories: Lululemon Down After Fiscal Q1 Results; Amazon Engineers Criticize AI Spending; Hoffman to Exit Microsoft Board",
           "sent": "pos",
           "sentLabel": "偏正面",
           "reason": "財報或業績優於預期",
           "date": "2026-06-05",
-          "url": "https://finance.yahoo.com/markets/stocks/articles/stocks-drop-ai-rally-pauses-013941709.html",
-          "publisher": "Reuters"
+          "url": "https://finance.yahoo.com/markets/stocks/articles/top-midday-stories-lululemon-down-160736879.html",
+          "publisher": "MT Newswires"
         },
         {
-          "title": "Stock Market Today: Nasdaq Slides 2% As Chips Drop, Yields Rise; AMD, Intel Lead Semis Sell-Off (Live Coverage)",
-          "sent": "neg",
-          "sentLabel": "偏負面",
-          "reason": "股價走弱或遭拋售",
-          "date": "2026-06-05",
-          "url": "https://www.investors.com/market-trend/stock-market-today/dow-jones-sp500-nasdaq-may-jobs-report-lululemon-stock-lulu-earnings/?src=A00220&yptr=yahoo",
-          "publisher": "Investor's Business Daily"
-        },
-        {
-          "title": "3 Top-Tech Stocks to Buy With $1,000 Right Now",
-          "sent": "pos",
-          "sentLabel": "偏正面",
-          "reason": "股價強勢上攻",
-          "date": "2026-06-05",
-          "url": "https://www.fool.com/investing/2026/06/05/3-top-tech-stocks-to-buy-with-1000-right-now/",
-          "publisher": "Motley Fool"
-        },
-        {
-          "title": "Nvidia Stock Falls On Concerns Of Backdoor AI Chip Sales To China",
-          "sent": "neg",
-          "sentLabel": "偏負面",
-          "reason": "股價走弱或遭拋售",
-          "date": "2026-06-05",
-          "url": "https://www.investors.com/news/technology/nvidia-stock-china-ai-chip-sales-scrutiny/?src=A00220&yptr=yahoo",
-          "publisher": "Investor's Business Daily"
-        },
-        {
-          "title": "Price Prediction: How High Can Chevron Soar This Year?",
+          "title": "Why Rigetti Computing Stock Just Crashed",
           "sent": "neu",
           "sentLabel": "中性",
           "reason": "一般報導,無明顯多空訊息",
           "date": "2026-06-05",
-          "url": "https://247wallst.com/investing/2026/06/05/price-prediction-how-high-can-chevron-soar-this-year/",
+          "url": "https://www.fool.com/investing/2026/06/05/why-rigetti-computing-stock-just-crashed/",
+          "publisher": "Motley Fool"
+        },
+        {
+          "title": "Price Prediction: Can DKNG Stock Double This Year?",
+          "sent": "pos",
+          "sentLabel": "偏正面",
+          "reason": "新產品、合作案或獲准消息",
+          "date": "2026-06-05",
+          "url": "https://247wallst.com/investing/2026/06/05/price-prediction-can-dkng-stock-double-this-year/",
+          "publisher": "24/7 Wall St."
+        },
+        {
+          "title": "Is SCHD a Buy Now?",
+          "sent": "pos",
+          "sentLabel": "偏正面",
+          "reason": "媒體看多評論",
+          "date": "2026-06-05",
+          "url": "https://www.fool.com/investing/2026/06/05/is-schd-a-buy-now/",
+          "publisher": "Motley Fool"
+        },
+        {
+          "title": "The Jobs Report Released Today Was Great. That’s Bad News for Bond Yields.",
+          "sent": "neu",
+          "sentLabel": "中性",
+          "reason": "一般報導,無明顯多空訊息",
+          "date": "2026-06-05",
+          "url": "https://247wallst.com/investing/2026/06/05/the-jobs-report-released-today-was-great-thats-bad-news-for-bond-yields/",
+          "publisher": "24/7 Wall St."
+        },
+        {
+          "title": "Got $3,000? 1 Ultra-Safe Dow Dividend Stock to Buy and Hold Forever",
+          "sent": "neu",
+          "sentLabel": "中性",
+          "reason": "一般報導,無明顯多空訊息",
+          "date": "2026-06-05",
+          "url": "https://247wallst.com/investing/2026/06/05/got-3000-1-ultra-safe-dow-dividend-stock-to-buy-and-hold-forever/",
+          "publisher": "24/7 Wall St."
+        },
+        {
+          "title": "Meta Stock Turns $1,000 Into $5,300 in 10 Years But Did It Beat The S&P 500?",
+          "sent": "neu",
+          "sentLabel": "中性",
+          "reason": "一般報導,無明顯多空訊息",
+          "date": "2026-06-05",
+          "url": "https://247wallst.com/investing/2026/06/05/meta-stock-turns-1000-into-5300-in-10-years-but-did-it-beat-the-sp-500/",
           "publisher": "24/7 Wall St."
         }
       ]
@@ -228,22 +228,31 @@
       ],
       "news": [
         {
-          "title": "Tech stocks today: Chip stocks remain pressured as Broadcom earnings spook AI investors",
+          "title": "How skeptical should investors be of these mega-IPOs?",
+          "sent": "pos",
+          "sentLabel": "偏正面",
+          "reason": "新產品、合作案或獲准消息",
+          "date": "2026-06-05",
+          "url": "https://finance.yahoo.com/video/skeptical-investors-mega-ipos-160000555.html",
+          "publisher": "Yahoo Finance Video"
+        },
+        {
+          "title": "Stock Market Stalling Action Can Often Precede Market Pullbacks. Here's How To Spot It.",
           "sent": "neu",
           "sentLabel": "中性",
           "reason": "一般報導,無明顯多空訊息",
-          "date": "2026-06-01",
-          "url": "https://finance.yahoo.com/sectors/technology/live/tech-stocks-today-chip-stocks-remain-pressured-as-broadcom-earnings-spook-ai-investors-100000607.html",
-          "publisher": "Yahoo Finance"
+          "date": "2026-06-05",
+          "url": "https://www.investors.com/how-to-invest/investors-corner/stock-market-stalling-action-precede-market-pullbacks-how-to-spot-it/?src=A00220&yptr=yahoo",
+          "publisher": "Investor's Business Daily"
         },
         {
-          "title": "Broadcom stock sinks 12% as AI chip forecast disappoints",
-          "sent": "neg",
-          "sentLabel": "偏負面",
-          "reason": "業績或展望不如預期",
-          "date": "2026-06-03",
-          "url": "https://finance.yahoo.com/markets/article/broadcom-stock-sinks-12-as-ai-chip-forecast-disappoints-165602082.html",
-          "publisher": "Yahoo Finance"
+          "title": "OpenAI Would’ve ‘Imploded’ If Altman Didn’t Return, Ex-CTO Says",
+          "sent": "neu",
+          "sentLabel": "中性",
+          "reason": "一般報導,無明顯多空訊息",
+          "date": "2026-06-05",
+          "url": "https://finance.yahoo.com/sectors/technology/articles/openai-ve-imploded-altman-didn-151830991.html",
+          "publisher": "Bloomberg"
         },
         {
           "title": "Scott Galloway Predicts AI Valuations Will Crater 50-70% Within 24 Months. Here’s Why.",
@@ -289,15 +298,6 @@
           "date": "2026-06-05",
           "url": "https://www.trefis.com/articles/601702/would-you-buy-ibm-stock-at-a-35-discount/2026-06-05",
           "publisher": "Trefis"
-        },
-        {
-          "title": "Should You Buy, Sell, or Hold SNOW Stock After a 16% Rise in One Year?",
-          "sent": "neu",
-          "sentLabel": "中性",
-          "reason": "一般報導,無明顯多空訊息",
-          "date": "2026-06-05",
-          "url": "https://finance.yahoo.com/markets/stocks/articles/buy-sell-hold-snow-stock-131700695.html",
-          "publisher": "Zacks"
         }
       ]
     },
