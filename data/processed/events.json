@@ -1,5 +1,5 @@
 {
-  "updated": "2026-06-05 16:20",
+  "updated": "2026-06-05 22:56",
   "stocks": {
     "NVDA": {
       "price_events": [
@@ -72,11 +72,29 @@
         {
           "date": "2026-06-05",
           "type": "price",
-          "pct": -4.7,
-          "title": "單日大跌 4.7%"
+          "pct": -6.2,
+          "title": "單日大跌 6.2%"
         }
       ],
       "news": [
+        {
+          "title": "Chip sell-off rattles markets",
+          "sent": "neu",
+          "sentLabel": "中性",
+          "reason": "一般報導,無明顯多空訊息",
+          "date": "2026-06-05",
+          "url": "https://finance.yahoo.com/video/chip-sell-off-rattles-markets-210216273.html",
+          "publisher": "Yahoo Finance Video"
+        },
+        {
+          "title": "SpaceX to rent AI capacity to Google for $920 million per month",
+          "sent": "neu",
+          "sentLabel": "中性",
+          "reason": "一般報導,無明顯多空訊息",
+          "date": "2026-06-05",
+          "url": "https://finance.yahoo.com/sectors/technology/article/spacex-to-rent-ai-capacity-to-google-for-920-million-per-month-200639544.html",
+          "publisher": "Yahoo Finance"
+        },
         {
           "title": "The stock market's scorching run means the rich will keep getting richer: Chart",
           "sent": "neu",
@@ -87,67 +105,49 @@
           "publisher": "Yahoo Finance"
         },
         {
-          "title": "Top Midday Stories: Lululemon Down After Fiscal Q1 Results; Amazon Engineers Criticize AI Spending; Hoffman to Exit Microsoft Board",
-          "sent": "pos",
-          "sentLabel": "偏正面",
-          "reason": "財報或業績優於預期",
-          "date": "2026-06-05",
-          "url": "https://finance.yahoo.com/markets/stocks/articles/top-midday-stories-lululemon-down-160736879.html",
-          "publisher": "MT Newswires"
-        },
-        {
-          "title": "Why Rigetti Computing Stock Just Crashed",
+          "title": "Stocks making big moves this week: Okta, TETRA Technologies, Fluence Energy, Verizon, and Cloudflare",
           "sent": "neu",
           "sentLabel": "中性",
           "reason": "一般報導,無明顯多空訊息",
           "date": "2026-06-05",
-          "url": "https://www.fool.com/investing/2026/06/05/why-rigetti-computing-stock-just-crashed/",
+          "url": "https://finance.yahoo.com/markets/stocks/articles/stocks-making-big-moves-week-223214227.html",
+          "publisher": "StockStory"
+        },
+        {
+          "title": "Berkshire Hathaway Just Agreed to Put $10 Billion Into Alphabet's AI Build-Out. Should Investors Follow?",
+          "sent": "neu",
+          "sentLabel": "中性",
+          "reason": "一般報導,無明顯多空訊息",
+          "date": "2026-06-05",
+          "url": "https://www.fool.com/investing/2026/06/05/berkshire-hathaway-just-put-10-billion-into-alphab/",
           "publisher": "Motley Fool"
         },
         {
-          "title": "Price Prediction: Can DKNG Stock Double This Year?",
-          "sent": "pos",
-          "sentLabel": "偏正面",
-          "reason": "新產品、合作案或獲准消息",
+          "title": "Turning 62 in 2026? You May Not Be Able to Apply for Social Security as Soon as You'd Hoped.",
+          "sent": "neu",
+          "sentLabel": "中性",
+          "reason": "一般報導,無明顯多空訊息",
           "date": "2026-06-05",
-          "url": "https://247wallst.com/investing/2026/06/05/price-prediction-can-dkng-stock-double-this-year/",
-          "publisher": "24/7 Wall St."
-        },
-        {
-          "title": "Is SCHD a Buy Now?",
-          "sent": "pos",
-          "sentLabel": "偏正面",
-          "reason": "媒體看多評論",
-          "date": "2026-06-05",
-          "url": "https://www.fool.com/investing/2026/06/05/is-schd-a-buy-now/",
+          "url": "https://www.fool.com/retirement/2026/06/05/turning-62-in-2026-you-may-not-be-able-to-apply-fo/",
           "publisher": "Motley Fool"
         },
         {
-          "title": "The Jobs Report Released Today Was Great. That’s Bad News for Bond Yields.",
+          "title": "Marvell stock pops after S&P 500 inclusion announcement",
           "sent": "neu",
           "sentLabel": "中性",
           "reason": "一般報導,無明顯多空訊息",
           "date": "2026-06-05",
-          "url": "https://247wallst.com/investing/2026/06/05/the-jobs-report-released-today-was-great-thats-bad-news-for-bond-yields/",
-          "publisher": "24/7 Wall St."
+          "url": "https://finance.yahoo.com/markets/stocks/articles/marvell-stock-pops-p-500-221524366.html",
+          "publisher": "Investing.com"
         },
         {
-          "title": "Got $3,000? 1 Ultra-Safe Dow Dividend Stock to Buy and Hold Forever",
-          "sent": "neu",
-          "sentLabel": "中性",
-          "reason": "一般報導,無明顯多空訊息",
+          "title": "Stock Market Today, June 5: Broadcom Falls as Strong AI Results Fail to Lift Guidance",
+          "sent": "neg",
+          "sentLabel": "偏負面",
+          "reason": "股價走弱或遭拋售",
           "date": "2026-06-05",
-          "url": "https://247wallst.com/investing/2026/06/05/got-3000-1-ultra-safe-dow-dividend-stock-to-buy-and-hold-forever/",
-          "publisher": "24/7 Wall St."
-        },
-        {
-          "title": "Meta Stock Turns $1,000 Into $5,300 in 10 Years But Did It Beat The S&P 500?",
-          "sent": "neu",
-          "sentLabel": "中性",
-          "reason": "一般報導,無明顯多空訊息",
-          "date": "2026-06-05",
-          "url": "https://247wallst.com/investing/2026/06/05/meta-stock-turns-1000-into-5300-in-10-years-but-did-it-beat-the-sp-500/",
-          "publisher": "24/7 Wall St."
+          "url": "https://www.fool.com/coverage/stock-market-today/2026/06/05/stock-market-today-june-5-broadcom-falls-as-strong-ai-results-fail-to-lift-guidance/",
+          "publisher": "Motley Fool"
         }
       ]
     },
@@ -228,76 +228,76 @@
       ],
       "news": [
         {
-          "title": "How skeptical should investors be of these mega-IPOs?",
+          "title": "Tech stocks today: Nvidia stock drops 6% in ugly day for chip stocks",
+          "sent": "neg",
+          "sentLabel": "偏負面",
+          "reason": "股價走弱或遭拋售",
+          "date": "2026-06-01",
+          "url": "https://finance.yahoo.com/sectors/technology/live/tech-stocks-today-nvidia-stock-drops-6-in-ugly-day-for-chip-stocks-100000734.html",
+          "publisher": "Yahoo Finance"
+        },
+        {
+          "title": "SpaceX to rent AI capacity to Google for $920 million per month",
+          "sent": "neu",
+          "sentLabel": "中性",
+          "reason": "一般報導,無明顯多空訊息",
+          "date": "2026-06-05",
+          "url": "https://finance.yahoo.com/sectors/technology/article/spacex-to-rent-ai-capacity-to-google-for-920-million-per-month-200639544.html",
+          "publisher": "Yahoo Finance"
+        },
+        {
+          "title": "Berkshire Hathaway Just Agreed to Put $10 Billion Into Alphabet's AI Build-Out. Should Investors Follow?",
+          "sent": "neu",
+          "sentLabel": "中性",
+          "reason": "一般報導,無明顯多空訊息",
+          "date": "2026-06-05",
+          "url": "https://www.fool.com/investing/2026/06/05/berkshire-hathaway-just-put-10-billion-into-alphab/",
+          "publisher": "Motley Fool"
+        },
+        {
+          "title": "Oracle Stock Has Returned $54 Billion To Shareholders. Can It Continue?",
+          "sent": "pos",
+          "sentLabel": "偏正面",
+          "reason": "展望調升或分析師看好",
+          "date": "2026-06-05",
+          "url": "https://www.trefis.com/articles/601600/years-of-rewards-54-bil-from-oracle-stock/2026-06-05",
+          "publisher": "Trefis"
+        },
+        {
+          "title": "Nasdaq Posts Worst Drop Since April 2025, S&P 500 And Dow Drop As Strong Jobs Data Ignites Rate Hike Bets — TSLA, GME, META, BA, MSTR, GOOGL In Focus",
+          "sent": "neu",
+          "sentLabel": "中性",
+          "reason": "一般報導,無明顯多空訊息",
+          "date": "2026-06-05",
+          "url": "https://stocktwits.com/news-articles/markets/equity/nasdaq-posts-worst-drop-since-april-2025-s-and-p-500-and-dow-drop-as-strong-jobs-data-ignites-rate-hike-bets-tsla-gme-meta-ba-mstr-in-focus/cZ0FUXKReCv",
+          "publisher": "Stocktwits"
+        },
+        {
+          "title": "The Tech Rally Goes in Reverse as Markets Anticipate Tighter Money",
+          "sent": "neu",
+          "sentLabel": "中性",
+          "reason": "一般報導,無明顯多空訊息",
+          "date": "2026-06-05",
+          "url": "https://www.barrons.com/articles/sp-500-nasdaq-tech-stocks-spacex-ipo-1e444637?siteid=yhoof2&yptr=yahoo",
+          "publisher": "Barrons.com"
+        },
+        {
+          "title": "Decoding AVGO Stock's Premium Valuation",
+          "sent": "neu",
+          "sentLabel": "中性",
+          "reason": "一般報導,無明顯多空訊息",
+          "date": "2026-06-05",
+          "url": "https://www.trefis.com/articles/601615/decoding-avgo-stocks-premium-valuation-2/2026-06-05",
+          "publisher": "Trefis"
+        },
+        {
+          "title": "SpaceX Inks $30 Billion Computing Power Deal With Google",
           "sent": "pos",
           "sentLabel": "偏正面",
           "reason": "新產品、合作案或獲准消息",
           "date": "2026-06-05",
-          "url": "https://finance.yahoo.com/video/skeptical-investors-mega-ipos-160000555.html",
-          "publisher": "Yahoo Finance Video"
-        },
-        {
-          "title": "Stock Market Stalling Action Can Often Precede Market Pullbacks. Here's How To Spot It.",
-          "sent": "neu",
-          "sentLabel": "中性",
-          "reason": "一般報導,無明顯多空訊息",
-          "date": "2026-06-05",
-          "url": "https://www.investors.com/how-to-invest/investors-corner/stock-market-stalling-action-precede-market-pullbacks-how-to-spot-it/?src=A00220&yptr=yahoo",
-          "publisher": "Investor's Business Daily"
-        },
-        {
-          "title": "OpenAI Would’ve ‘Imploded’ If Altman Didn’t Return, Ex-CTO Says",
-          "sent": "neu",
-          "sentLabel": "中性",
-          "reason": "一般報導,無明顯多空訊息",
-          "date": "2026-06-05",
-          "url": "https://finance.yahoo.com/sectors/technology/articles/openai-ve-imploded-altman-didn-151830991.html",
+          "url": "https://finance.yahoo.com/video/spacex-inks-30-billion-computing-211633710.html",
           "publisher": "Bloomberg"
-        },
-        {
-          "title": "Scott Galloway Predicts AI Valuations Will Crater 50-70% Within 24 Months. Here’s Why.",
-          "sent": "neu",
-          "sentLabel": "中性",
-          "reason": "一般報導,無明顯多空訊息",
-          "date": "2026-06-05",
-          "url": "https://247wallst.com/investing/2026/06/05/scott-galloway-predicts-ai-valuations-will-crater-50-70-within-24-months-heres-why/",
-          "publisher": "24/7 Wall St."
-        },
-        {
-          "title": "Palantir Technologies Expanding AI Use Cases Strengthen Competitive Position, Wedbush Says",
-          "sent": "neu",
-          "sentLabel": "中性",
-          "reason": "一般報導,無明顯多空訊息",
-          "date": "2026-06-05",
-          "url": "https://finance.yahoo.com/sectors/technology/articles/palantir-technologies-expanding-ai-cases-145657471.html",
-          "publisher": "MT Newswires"
-        },
-        {
-          "title": "Alphabet Is Raising $80 Billion From Stock Sales -- Here's the Most Important Question Investors Should Ask",
-          "sent": "neu",
-          "sentLabel": "中性",
-          "reason": "一般報導,無明顯多空訊息",
-          "date": "2026-06-05",
-          "url": "https://www.fool.com/investing/2026/06/05/alphabets-raising-80-billion-from-stock-sales-here/",
-          "publisher": "Motley Fool"
-        },
-        {
-          "title": "Jim Cramer Highlights Alphabet’s Expensive New Capital Needs",
-          "sent": "neu",
-          "sentLabel": "中性",
-          "reason": "一般報導,無明顯多空訊息",
-          "date": "2026-06-05",
-          "url": "https://finance.yahoo.com/markets/stocks/articles/jim-cramer-highlights-alphabet-expensive-141416555.html",
-          "publisher": "Insider Monkey"
-        },
-        {
-          "title": "Would You Buy IBM Stock At A 35% Discount?",
-          "sent": "neu",
-          "sentLabel": "中性",
-          "reason": "一般報導,無明顯多空訊息",
-          "date": "2026-06-05",
-          "url": "https://www.trefis.com/articles/601702/would-you-buy-ibm-stock-at-a-35-discount/2026-06-05",
-          "publisher": "Trefis"
         }
       ]
     },
@@ -378,58 +378,13 @@
       ],
       "news": [
         {
-          "title": "Jim Cramer Highlights Johnson & Johnson Having No Big Patent Expirations",
+          "title": "Dow Jones Futures: What To Do As Market Rally Faces First Real Test; SpaceX IPO, Apple, Oracle Loom",
           "sent": "neu",
           "sentLabel": "中性",
           "reason": "一般報導,無明顯多空訊息",
           "date": "2026-06-05",
-          "url": "https://finance.yahoo.com/markets/stocks/articles/jim-cramer-highlights-johnson-johnson-141423792.html",
-          "publisher": "Insider Monkey"
-        },
-        {
-          "title": "Jim Cramer Details How Eli Lilly Could Defeat Competitors",
-          "sent": "neu",
-          "sentLabel": "中性",
-          "reason": "一般報導,無明顯多空訊息",
-          "date": "2026-06-05",
-          "url": "https://finance.yahoo.com/sectors/healthcare/articles/jim-cramer-details-eli-lilly-141421988.html",
-          "publisher": "Insider Monkey"
-        },
-        {
-          "title": "Can Eli Lilly's 2026 Acquisition Spree Diversify Growth Beyond GLP-1s?",
-          "sent": "pos",
-          "sentLabel": "偏正面",
-          "reason": "新產品、合作案或獲准消息",
-          "date": "2026-06-05",
-          "url": "https://finance.yahoo.com/sectors/healthcare/articles/eli-lillys-2026-acquisition-spree-133400166.html",
-          "publisher": "Zacks"
-        },
-        {
-          "title": "LLY Rises 14% in a Month: Should You Hold as Obesity Growth Continues?",
-          "sent": "neu",
-          "sentLabel": "中性",
-          "reason": "一般報導,無明顯多空訊息",
-          "date": "2026-06-05",
-          "url": "https://finance.yahoo.com/sectors/healthcare/articles/lly-rises-14-month-hold-125600959.html",
-          "publisher": "Zacks"
-        },
-        {
-          "title": "TD Cowen Raises GLP-1 Sales Forecast To $150B By 2030 – Industry Leaders LLY, NVO To Remain Dominant",
-          "sent": "neu",
-          "sentLabel": "中性",
-          "reason": "一般報導,無明顯多空訊息",
-          "date": "2026-06-05",
-          "url": "https://stocktwits.com/news-articles/markets/equity/td-cowen-glp1-sales-forecast-lilly-novo-to-remain-leaders/cZ0FkzQReCB",
-          "publisher": "Stocktwits"
-        },
-        {
-          "title": "How Investors Are Reacting To Eli Lilly (LLY) Expanded GLP-1 Access And Digital Obesity Ecosystem",
-          "sent": "neu",
-          "sentLabel": "中性",
-          "reason": "一般報導,無明顯多空訊息",
-          "date": "2026-06-05",
-          "url": "https://finance.yahoo.com/sectors/healthcare/articles/investors-reacting-eli-lilly-lly-120620061.html",
-          "publisher": "Simply Wall St."
+          "url": "https://www.investors.com/market-trend/stock-market-today/dow-jones-futures-what-to-do-market-rally-test-spacex-ipo-apple-oracle/?src=A00220&yptr=yahoo",
+          "publisher": "Investor's Business Daily"
         },
         {
           "title": "Dow Jones Futures Rise, Techs Fall As AI Trade Cools; Jobs Report Looms",
@@ -441,13 +396,58 @@
           "publisher": "Investor's Business Daily"
         },
         {
-          "title": "CVS Health Just Announced Fantastic News to Eli Lilly Stock Investors",
+          "title": "UnitedHealth, Eli Lilly Lead Healthcare Rebound as Investors Seek Stability",
           "sent": "neu",
           "sentLabel": "中性",
           "reason": "一般報導,無明顯多空訊息",
           "date": "2026-06-05",
-          "url": "https://www.fool.com/investing/2026/06/05/cvs-health-just-announced-fantastic-news-to-eli-li/",
-          "publisher": "Motley Fool"
+          "url": "https://finance.yahoo.com/sectors/healthcare/articles/unitedhealth-eli-lilly-lead-healthcare-183218104.html",
+          "publisher": "GuruFocus.com"
+        },
+        {
+          "title": "Novo And Lilly Push Beyond US As Only 1%-2% Use Obesity Drugs Globally",
+          "sent": "neu",
+          "sentLabel": "中性",
+          "reason": "一般報導,無明顯多空訊息",
+          "date": "2026-06-05",
+          "url": "https://finance.yahoo.com/sectors/healthcare/articles/novo-lilly-push-beyond-us-183108101.html",
+          "publisher": "GuruFocus.com"
+        },
+        {
+          "title": "GLP-1 Sales Forecast Jumps To $150 Billion By 2030",
+          "sent": "pos",
+          "sentLabel": "偏正面",
+          "reason": "股價強勢上攻",
+          "date": "2026-06-05",
+          "url": "https://finance.yahoo.com/sectors/healthcare/articles/glp-1-sales-forecast-jumps-171933527.html",
+          "publisher": "GuruFocus.com"
+        },
+        {
+          "title": "Here’s Why Eli Lilly (LLY) is Among the 10 Best American Stocks to Buy and Hold for the Next Decade",
+          "sent": "neu",
+          "sentLabel": "中性",
+          "reason": "一般報導,無明顯多空訊息",
+          "date": "2026-06-05",
+          "url": "https://finance.yahoo.com/markets/stocks/articles/why-eli-lilly-lly-among-164639188.html",
+          "publisher": "Insider Monkey"
+        },
+        {
+          "title": "Why Health Care's Seasonal Tailwind Looks Especially Compelling This Year",
+          "sent": "neu",
+          "sentLabel": "中性",
+          "reason": "一般報導,無明顯多空訊息",
+          "date": "2026-06-05",
+          "url": "https://finance.yahoo.com/sectors/healthcare/articles/why-health-cares-seasonal-tailwind-154700743.html",
+          "publisher": "Zacks"
+        },
+        {
+          "title": "Jim Cramer Highlights Johnson & Johnson Having No Big Patent Expirations",
+          "sent": "neu",
+          "sentLabel": "中性",
+          "reason": "一般報導,無明顯多空訊息",
+          "date": "2026-06-05",
+          "url": "https://finance.yahoo.com/markets/stocks/articles/jim-cramer-highlights-johnson-johnson-141423792.html",
+          "publisher": "Insider Monkey"
         }
       ]
     }
