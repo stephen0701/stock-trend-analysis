@@ -1,0 +1,51 @@
+name: daily-update
+
+on:
+  schedule:
+    # UTC 22:00 = 台灣時間早上 6:00(美股已收盤)。週二~週六對應美股週一~週五交易日
+    - cron: "0 22 * * 1-5"
+  workflow_dispatch: {}   # 也可在 GitHub 網頁上手動觸發
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+jobs:
+  update-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install yfinance pandas
+
+      - name: Run daily pipeline
+        run: python run_daily.py
+
+      - name: Commit updated data
+        run: |
+          git config user.name "auto-update-bot"
+          git config user.email "actions@github.com"
+          git add data app/data.js
+          git diff --cached --quiet || git commit -m "daily data update $(date -u +%F)"
+          git push
+
+      - name: Upload app for Pages
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: app
+
+  deploy:
+    needs: update-and-deploy
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

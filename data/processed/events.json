@@ -1,0 +1,455 @@
+{
+  "updated": "2026-06-05 15:58",
+  "stocks": {
+    "NVDA": {
+      "price_events": [
+        {
+          "date": "2026-02-26",
+          "type": "price",
+          "pct": -5.5,
+          "title": "單日大跌 5.5%"
+        },
+        {
+          "date": "2026-02-27",
+          "type": "price",
+          "pct": -4.2,
+          "title": "單日大跌 4.2%"
+        },
+        {
+          "date": "2026-03-26",
+          "type": "price",
+          "pct": -4.2,
+          "title": "單日大跌 4.2%"
+        },
+        {
+          "date": "2026-03-31",
+          "type": "price",
+          "pct": 5.6,
+          "title": "單日大漲 5.6%"
+        },
+        {
+          "date": "2026-04-24",
+          "type": "price",
+          "pct": 4.3,
+          "title": "單日大漲 4.3%"
+        },
+        {
+          "date": "2026-04-27",
+          "type": "price",
+          "pct": 4.0,
+          "title": "單日大漲 4.0%"
+        },
+        {
+          "date": "2026-04-30",
+          "type": "price",
+          "pct": -4.6,
+          "title": "單日大跌 4.6%"
+        },
+        {
+          "date": "2026-05-06",
+          "type": "price",
+          "pct": 5.8,
+          "title": "單日大漲 5.8%"
+        },
+        {
+          "date": "2026-05-14",
+          "type": "price",
+          "pct": 4.4,
+          "title": "單日大漲 4.4%"
+        },
+        {
+          "date": "2026-05-15",
+          "type": "price",
+          "pct": -4.4,
+          "title": "單日大跌 4.4%"
+        },
+        {
+          "date": "2026-06-01",
+          "type": "price",
+          "pct": 6.3,
+          "title": "單日大漲 6.3%"
+        },
+        {
+          "date": "2026-06-05",
+          "type": "price",
+          "pct": -4.8,
+          "title": "單日大跌 4.8%"
+        }
+      ],
+      "news": [
+        {
+          "title": "The stock market's scorching run means the rich will keep getting richer: Chart",
+          "sent": "neu",
+          "sentLabel": "中性",
+          "reason": "一般報導,無明顯多空訊息",
+          "date": "2026-06-05",
+          "url": "https://finance.yahoo.com/markets/article/the-stock-markets-scorching-run-means-the-rich-will-keep-getting-richer-chart-135939239.html",
+          "publisher": "Yahoo Finance"
+        },
+        {
+          "title": "What Is the Vanguard Utilities ETF, and Who Should Buy It?",
+          "sent": "neu",
+          "sentLabel": "中性",
+          "reason": "一般報導,無明顯多空訊息",
+          "date": "2026-06-05",
+          "url": "https://www.fool.com/investing/2026/06/05/what-is-the-vanguard-utilities-etf-and-why-buy/",
+          "publisher": "Motley Fool"
+        },
+        {
+          "title": "The S&P 500 Snubs SpaceX as Elon Musk Describes a Coming ‘Massive Growth Phase’",
+          "sent": "neu",
+          "sentLabel": "中性",
+          "reason": "一般報導,無明顯多空訊息",
+          "date": "2026-06-05",
+          "url": "https://247wallst.com/investing/2026/06/05/the-sp-500-snubs-spacex-as-elon-musk-describes-a-coming-massive-growth-phase/",
+          "publisher": "24/7 Wall St."
+        },
+        {
+          "title": "Stocks fall as strong jobs data fuels rate hike bets; oil set for weekly gain",
+          "sent": "pos",
+          "sentLabel": "偏正面",
+          "reason": "財報或業績優於預期",
+          "date": "2026-06-05",
+          "url": "https://finance.yahoo.com/markets/stocks/articles/stocks-drop-ai-rally-pauses-013941709.html",
+          "publisher": "Reuters"
+        },
+        {
+          "title": "Stock Market Today: Nasdaq Slides 2% As Chips Drop, Yields Rise; AMD, Intel Lead Semis Sell-Off (Live Coverage)",
+          "sent": "neg",
+          "sentLabel": "偏負面",
+          "reason": "股價走弱或遭拋售",
+          "date": "2026-06-05",
+          "url": "https://www.investors.com/market-trend/stock-market-today/dow-jones-sp500-nasdaq-may-jobs-report-lululemon-stock-lulu-earnings/?src=A00220&yptr=yahoo",
+          "publisher": "Investor's Business Daily"
+        },
+        {
+          "title": "3 Top-Tech Stocks to Buy With $1,000 Right Now",
+          "sent": "pos",
+          "sentLabel": "偏正面",
+          "reason": "股價強勢上攻",
+          "date": "2026-06-05",
+          "url": "https://www.fool.com/investing/2026/06/05/3-top-tech-stocks-to-buy-with-1000-right-now/",
+          "publisher": "Motley Fool"
+        },
+        {
+          "title": "Nvidia Stock Falls On Concerns Of Backdoor AI Chip Sales To China",
+          "sent": "neg",
+          "sentLabel": "偏負面",
+          "reason": "股價走弱或遭拋售",
+          "date": "2026-06-05",
+          "url": "https://www.investors.com/news/technology/nvidia-stock-china-ai-chip-sales-scrutiny/?src=A00220&yptr=yahoo",
+          "publisher": "Investor's Business Daily"
+        },
+        {
+          "title": "Price Prediction: How High Can Chevron Soar This Year?",
+          "sent": "neu",
+          "sentLabel": "中性",
+          "reason": "一般報導,無明顯多空訊息",
+          "date": "2026-06-05",
+          "url": "https://247wallst.com/investing/2026/06/05/price-prediction-how-high-can-chevron-soar-this-year/",
+          "publisher": "24/7 Wall St."
+        }
+      ]
+    },
+    "GOOG": {
+      "price_events": [
+        {
+          "date": "2024-12-11",
+          "type": "price",
+          "pct": 5.5,
+          "title": "單日大漲 5.5%"
+        },
+        {
+          "date": "2025-01-27",
+          "type": "price",
+          "pct": -4.0,
+          "title": "單日大跌 4.0%"
+        },
+        {
+          "date": "2025-02-05",
+          "type": "price",
+          "pct": -6.9,
+          "title": "單日大跌 6.9%"
+        },
+        {
+          "date": "2025-03-10",
+          "type": "price",
+          "pct": -4.4,
+          "title": "單日大跌 4.4%"
+        },
+        {
+          "date": "2025-03-28",
+          "type": "price",
+          "pct": -4.9,
+          "title": "單日大跌 4.9%"
+        },
+        {
+          "date": "2025-04-09",
+          "type": "price",
+          "pct": 9.9,
+          "title": "單日大漲 9.9%"
+        },
+        {
+          "date": "2025-05-07",
+          "type": "price",
+          "pct": -7.5,
+          "title": "單日大跌 7.5%"
+        },
+        {
+          "date": "2025-09-03",
+          "type": "price",
+          "pct": 9.0,
+          "title": "單日大漲 9.0%"
+        },
+        {
+          "date": "2025-09-15",
+          "type": "price",
+          "pct": 4.3,
+          "title": "單日大漲 4.3%"
+        },
+        {
+          "date": "2025-11-24",
+          "type": "price",
+          "pct": 6.3,
+          "title": "單日大漲 6.3%"
+        },
+        {
+          "date": "2026-03-31",
+          "type": "price",
+          "pct": 5.0,
+          "title": "單日大漲 5.0%"
+        },
+        {
+          "date": "2026-04-30",
+          "type": "price",
+          "pct": 10.0,
+          "title": "單日大漲 10.0%"
+        }
+      ],
+      "news": [
+        {
+          "title": "Tech stocks today: Chip stocks remain pressured as Broadcom earnings spook AI investors",
+          "sent": "neu",
+          "sentLabel": "中性",
+          "reason": "一般報導,無明顯多空訊息",
+          "date": "2026-06-01",
+          "url": "https://finance.yahoo.com/sectors/technology/live/tech-stocks-today-chip-stocks-remain-pressured-as-broadcom-earnings-spook-ai-investors-100000607.html",
+          "publisher": "Yahoo Finance"
+        },
+        {
+          "title": "Broadcom stock sinks 12% as AI chip forecast disappoints",
+          "sent": "neg",
+          "sentLabel": "偏負面",
+          "reason": "業績或展望不如預期",
+          "date": "2026-06-03",
+          "url": "https://finance.yahoo.com/markets/article/broadcom-stock-sinks-12-as-ai-chip-forecast-disappoints-165602082.html",
+          "publisher": "Yahoo Finance"
+        },
+        {
+          "title": "Scott Galloway Predicts AI Valuations Will Crater 50-70% Within 24 Months. Here’s Why.",
+          "sent": "neu",
+          "sentLabel": "中性",
+          "reason": "一般報導,無明顯多空訊息",
+          "date": "2026-06-05",
+          "url": "https://247wallst.com/investing/2026/06/05/scott-galloway-predicts-ai-valuations-will-crater-50-70-within-24-months-heres-why/",
+          "publisher": "24/7 Wall St."
+        },
+        {
+          "title": "Palantir Technologies Expanding AI Use Cases Strengthen Competitive Position, Wedbush Says",
+          "sent": "neu",
+          "sentLabel": "中性",
+          "reason": "一般報導,無明顯多空訊息",
+          "date": "2026-06-05",
+          "url": "https://finance.yahoo.com/sectors/technology/articles/palantir-technologies-expanding-ai-cases-145657471.html",
+          "publisher": "MT Newswires"
+        },
+        {
+          "title": "Alphabet Is Raising $80 Billion From Stock Sales -- Here's the Most Important Question Investors Should Ask",
+          "sent": "neu",
+          "sentLabel": "中性",
+          "reason": "一般報導,無明顯多空訊息",
+          "date": "2026-06-05",
+          "url": "https://www.fool.com/investing/2026/06/05/alphabets-raising-80-billion-from-stock-sales-here/",
+          "publisher": "Motley Fool"
+        },
+        {
+          "title": "Jim Cramer Highlights Alphabet’s Expensive New Capital Needs",
+          "sent": "neu",
+          "sentLabel": "中性",
+          "reason": "一般報導,無明顯多空訊息",
+          "date": "2026-06-05",
+          "url": "https://finance.yahoo.com/markets/stocks/articles/jim-cramer-highlights-alphabet-expensive-141416555.html",
+          "publisher": "Insider Monkey"
+        },
+        {
+          "title": "Would You Buy IBM Stock At A 35% Discount?",
+          "sent": "neu",
+          "sentLabel": "中性",
+          "reason": "一般報導,無明顯多空訊息",
+          "date": "2026-06-05",
+          "url": "https://www.trefis.com/articles/601702/would-you-buy-ibm-stock-at-a-35-discount/2026-06-05",
+          "publisher": "Trefis"
+        },
+        {
+          "title": "Should You Buy, Sell, or Hold SNOW Stock After a 16% Rise in One Year?",
+          "sent": "neu",
+          "sentLabel": "中性",
+          "reason": "一般報導,無明顯多空訊息",
+          "date": "2026-06-05",
+          "url": "https://finance.yahoo.com/markets/stocks/articles/buy-sell-hold-snow-stock-131700695.html",
+          "publisher": "Zacks"
+        }
+      ]
+    },
+    "LLY": {
+      "price_events": [
+        {
+          "date": "2025-08-26",
+          "type": "price",
+          "pct": 5.9,
+          "title": "單日大漲 5.9%"
+        },
+        {
+          "date": "2025-09-30",
+          "type": "price",
+          "pct": 5.0,
+          "title": "單日大漲 5.0%"
+        },
+        {
+          "date": "2025-10-01",
+          "type": "price",
+          "pct": 8.2,
+          "title": "單日大漲 8.2%"
+        },
+        {
+          "date": "2025-11-10",
+          "type": "price",
+          "pct": 4.6,
+          "title": "單日大漲 4.6%"
+        },
+        {
+          "date": "2026-01-07",
+          "type": "price",
+          "pct": 4.1,
+          "title": "單日大漲 4.1%"
+        },
+        {
+          "date": "2026-02-04",
+          "type": "price",
+          "pct": 10.3,
+          "title": "單日大漲 10.3%"
+        },
+        {
+          "date": "2026-02-05",
+          "type": "price",
+          "pct": -7.8,
+          "title": "單日大跌 7.8%"
+        },
+        {
+          "date": "2026-02-23",
+          "type": "price",
+          "pct": 4.9,
+          "title": "單日大漲 4.9%"
+        },
+        {
+          "date": "2026-03-17",
+          "type": "price",
+          "pct": -5.9,
+          "title": "單日大跌 5.9%"
+        },
+        {
+          "date": "2026-04-30",
+          "type": "price",
+          "pct": 9.8,
+          "title": "單日大漲 9.8%"
+        },
+        {
+          "date": "2026-05-28",
+          "type": "price",
+          "pct": 4.1,
+          "title": "單日大漲 4.1%"
+        },
+        {
+          "date": "2026-06-04",
+          "type": "price",
+          "pct": 4.3,
+          "title": "單日大漲 4.3%"
+        }
+      ],
+      "news": [
+        {
+          "title": "Jim Cramer Highlights Johnson & Johnson Having No Big Patent Expirations",
+          "sent": "neu",
+          "sentLabel": "中性",
+          "reason": "一般報導,無明顯多空訊息",
+          "date": "2026-06-05",
+          "url": "https://finance.yahoo.com/markets/stocks/articles/jim-cramer-highlights-johnson-johnson-141423792.html",
+          "publisher": "Insider Monkey"
+        },
+        {
+          "title": "Jim Cramer Details How Eli Lilly Could Defeat Competitors",
+          "sent": "neu",
+          "sentLabel": "中性",
+          "reason": "一般報導,無明顯多空訊息",
+          "date": "2026-06-05",
+          "url": "https://finance.yahoo.com/sectors/healthcare/articles/jim-cramer-details-eli-lilly-141421988.html",
+          "publisher": "Insider Monkey"
+        },
+        {
+          "title": "Can Eli Lilly's 2026 Acquisition Spree Diversify Growth Beyond GLP-1s?",
+          "sent": "pos",
+          "sentLabel": "偏正面",
+          "reason": "新產品、合作案或獲准消息",
+          "date": "2026-06-05",
+          "url": "https://finance.yahoo.com/sectors/healthcare/articles/eli-lillys-2026-acquisition-spree-133400166.html",
+          "publisher": "Zacks"
+        },
+        {
+          "title": "LLY Rises 14% in a Month: Should You Hold as Obesity Growth Continues?",
+          "sent": "neu",
+          "sentLabel": "中性",
+          "reason": "一般報導,無明顯多空訊息",
+          "date": "2026-06-05",
+          "url": "https://finance.yahoo.com/sectors/healthcare/articles/lly-rises-14-month-hold-125600959.html",
+          "publisher": "Zacks"
+        },
+        {
+          "title": "TD Cowen Raises GLP-1 Sales Forecast To $150B By 2030 – Industry Leaders LLY, NVO To Remain Dominant",
+          "sent": "neu",
+          "sentLabel": "中性",
+          "reason": "一般報導,無明顯多空訊息",
+          "date": "2026-06-05",
+          "url": "https://stocktwits.com/news-articles/markets/equity/td-cowen-glp1-sales-forecast-lilly-novo-to-remain-leaders/cZ0FkzQReCB",
+          "publisher": "Stocktwits"
+        },
+        {
+          "title": "How Investors Are Reacting To Eli Lilly (LLY) Expanded GLP-1 Access And Digital Obesity Ecosystem",
+          "sent": "neu",
+          "sentLabel": "中性",
+          "reason": "一般報導,無明顯多空訊息",
+          "date": "2026-06-05",
+          "url": "https://finance.yahoo.com/sectors/healthcare/articles/investors-reacting-eli-lilly-lly-120620061.html",
+          "publisher": "Simply Wall St."
+        },
+        {
+          "title": "Dow Jones Futures Rise, Techs Fall As AI Trade Cools; Jobs Report Looms",
+          "sent": "neu",
+          "sentLabel": "中性",
+          "reason": "一般報導,無明顯多空訊息",
+          "date": "2026-06-05",
+          "url": "https://www.investors.com/market-trend/stock-market-today/dow-jones-futures-ai-stocks-broadcom-ciena-jobs-report/?src=A00220&yptr=yahoo",
+          "publisher": "Investor's Business Daily"
+        },
+        {
+          "title": "CVS Health Just Announced Fantastic News to Eli Lilly Stock Investors",
+          "sent": "neu",
+          "sentLabel": "中性",
+          "reason": "一般報導,無明顯多空訊息",
+          "date": "2026-06-05",
+          "url": "https://www.fool.com/investing/2026/06/05/cvs-health-just-announced-fantastic-news-to-eli-li/",
+          "publisher": "Motley Fool"
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>趨勢小幫手</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script src="data.js"></script>
+<style>
+  :root{--bg:#0f1420;--card:#1a2233;--card2:#222c42;--text:#e8ecf4;--muted:#8a94a8;
+    --green:#22c55e;--yellow:#eab308;--red:#ef4444;--blue:#3b82f6;--accent:#6366f1;}
+  *{box-sizing:border-box;margin:0;padding:0;font-family:"PingFang TC","Microsoft JhengHei",system-ui,sans-serif;}
+  html,body{height:100%;}
+  body{background:var(--bg);display:flex;flex-direction:column;max-width:480px;margin:0 auto;}
+  header.appbar{padding:14px 18px 6px;display:flex;justify-content:space-between;align-items:center;}
+  .appbar h1{font-size:18px;color:var(--text);}
+  .appbar .upd{font-size:10px;color:var(--muted);}
+  .screen{flex:1;overflow-y:auto;padding:12px 16px;}
+  nav{display:flex;border-top:1px solid #2a3245;background:var(--bg);}
+  nav button{flex:1;background:none;border:none;color:var(--muted);padding:10px 0 14px;font-size:11px;cursor:pointer;}
+  nav button .ico{font-size:20px;display:block;margin-bottom:2px;}
+  nav button.active{color:var(--accent);}
+  .card{background:var(--card);border-radius:16px;padding:14px;margin-bottom:12px;color:var(--text);}
+  .card h3{font-size:13px;color:var(--muted);margin-bottom:8px;font-weight:600;}
+  .stock-row{display:flex;align-items:center;gap:12px;padding:12px 14px;background:var(--card);border-radius:16px;margin-bottom:10px;cursor:pointer;}
+  .stock-row:active{background:var(--card2);}
+  .t-ico{font-size:20px;flex-shrink:0;}
+  .stock-row .name{flex:1;}
+  .stock-row .name b{color:var(--text);font-size:15px;display:block;}
+  .stock-row .name span{color:var(--muted);font-size:11px;}
+  .stock-row .px{text-align:right;}
+  .stock-row .px b{display:block;color:var(--text);font-size:15px;}
+  .up{color:var(--green)!important;}.down{color:var(--red)!important;}
+  .pct{font-size:12px;}
+  .earn-chip{font-size:10px;color:#f59e0b;display:block;margin-top:2px;}
+  .hint{font-size:11px;color:var(--muted);margin:4px 2px 10px;line-height:1.6;}
+  .back{background:none;border:none;color:var(--accent);font-size:14px;cursor:pointer;margin-bottom:8px;}
+  .det-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;}
+  .det-head h2{color:var(--text);font-size:20px;}
+  .det-head .sub{color:var(--muted);font-size:12px;}
+  .det-price b{font-size:22px;color:var(--text);}
+  .summary{background:linear-gradient(135deg,#222c42,#1a2233);border-left:4px solid var(--accent);border-radius:12px;padding:12px 14px;margin-bottom:12px;}
+  .summary .tag{font-size:10px;color:var(--accent);margin-bottom:4px;}
+  .summary p{color:var(--text);font-size:13px;line-height:1.7;}
+  .chart-wrap{position:relative;height:250px;}
+  .legend{display:flex;gap:12px;font-size:10px;color:var(--muted);margin-top:6px;flex-wrap:wrap;}
+  .legend i{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:3px;}
+  .event{display:flex;gap:10px;padding:10px 0;border-bottom:1px solid #2a3245;}
+  .event:last-child{border-bottom:none;}
+  .event .dot{width:10px;height:10px;border-radius:50%;margin-top:4px;flex-shrink:0;}
+  .event .ev-t b{font-size:13px;color:var(--text);}
+  .event .ev-t .date{font-size:10px;color:var(--muted);margin-left:6px;}
+  .news a{color:var(--blue);font-size:13px;text-decoration:none;line-height:1.5;display:block;}
+  .news .nsum{font-size:11.5px;color:var(--muted);line-height:1.6;margin-top:3px;}
+  .news .meta{font-size:10px;color:#5a6478;margin:3px 0 12px;}
+  .trend-card{border-radius:16px;padding:14px;margin-bottom:12px;}
+  .trend-up{background:linear-gradient(135deg,#0e2a1a,#1a2233);border-left:4px solid var(--green);}
+  .trend-down{background:linear-gradient(135deg,#2a0e0e,#1a2233);border-left:4px solid var(--red);}
+  .trend-range{background:linear-gradient(135deg,#2a230e,#1a2233);border-left:4px solid var(--yellow);}
+  .trend-card .term{font-size:17px;font-weight:700;color:var(--text);}
+  .trend-card .badge{font-size:10px;color:var(--muted);margin-left:8px;}
+  .trend-card p{color:#c5cddb;font-size:12.5px;line-height:1.8;margin-top:6px;}
+  table.ind{width:100%;border-collapse:collapse;}
+  table.ind td{padding:7px 2px;border-bottom:1px solid #2a3245;font-size:12px;vertical-align:top;}
+  table.ind tr:last-child td{border-bottom:none;}
+  td.k{color:var(--blue);cursor:pointer;white-space:nowrap;border-bottom:1px dashed var(--blue);width:96px;}
+  td.kp{color:var(--muted);white-space:nowrap;width:110px;}
+  td.v{color:var(--text);}
+  td.r{text-align:right;}
+  .b-bull{color:var(--green);} .b-bear{color:var(--red);} .b-neutral{color:var(--muted);}
+  .sr{display:flex;gap:8px;margin-bottom:12px;}
+  .sr .box{flex:1;border-radius:12px;padding:10px;text-align:center;background:var(--card);}
+  .sr .box b{font-size:16px;display:block;}
+  .sr .box span{font-size:10px;color:var(--muted);}
+  .earnbar{display:flex;align-items:center;gap:10px;margin-bottom:12px;background:linear-gradient(135deg,#2a1d0e,#1a2233);border-left:4px solid #f59e0b;border-radius:12px;padding:12px 14px;}
+  .earnbar .n{font-size:22px;font-weight:800;color:#f59e0b;}
+  .earnbar .t b{color:var(--text);font-size:13px;display:block;}
+  .earnbar .t span{color:var(--muted);font-size:11px;}
+  .modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.6);display:none;align-items:flex-end;justify-content:center;z-index:10;}
+  .modal-bg.show{display:flex;}
+  .modal{background:var(--card2);width:100%;max-width:480px;border-radius:20px 20px 0 0;padding:20px;}
+  .modal h4{color:var(--text);margin-bottom:8px;font-size:15px;}
+  .modal p{color:var(--muted);font-size:13px;line-height:1.8;}
+  .modal button{margin-top:14px;width:100%;padding:10px;border:none;border-radius:12px;background:var(--accent);color:#fff;font-size:14px;cursor:pointer;}
+  .faq{cursor:pointer;}
+  .faq b{color:var(--text);font-size:13px;display:block;}
+  .faq p{display:none;color:var(--muted);font-size:12px;line-height:1.7;margin-top:6px;}
+  .faq.open p{display:block;}
+  .disclaimer{font-size:10px;color:#5a6478;text-align:center;padding:6px 16px;line-height:1.5;}
+</style>
+</head>
+<body>
+  <header class="appbar"><h1>📈 趨勢小幫手</h1><span class="upd" id="upd"></span></header>
+  <div class="screen" id="screen"></div>
+  <div class="disclaimer">⚠️ 本工具描述現況、不預測漲跌、不構成投資建議。買賣決定請自行判斷。</div>
+  <nav>
+    <button data-tab="watch" class="active"><span class="ico">⭐</span>自選股</button>
+    <button data-tab="learn"><span class="ico">📚</span>學習</button>
+  </nav>
+  <div class="modal-bg" id="modalBg" onclick="this.classList.remove('show')">
+    <div class="modal" onclick="event.stopPropagation()">
+      <h4 id="mTitle"></h4><p id="mBody"></p>
+      <button onclick="document.getElementById('modalBg').classList.remove('show')">知道了</button>
+    </div>
+  </div>
+<script>
+const D = window.APP_DATA;
+const trendIcon = {up:"📈", down:"📉", range:"↔️"};
+const trendColor = {up:"#22c55e", down:"#ef4444", range:"#eab308"};
+const GLOSSARY = {
+  "均線排列":"均線 = 過去 N 天收盤價的平均。「多頭排列」指股價 > 20日均線 > 60日均線,代表短中期買進的人都賺錢、上漲結構健康;「空頭排列」相反;「糾結」代表方向不明。",
+  "相對大盤強弱":"個股報酬減去同期 S&P 500 大盤報酬。個股漲 3% 但大盤漲 5%,其實是相對弱勢(-2%)。「強於大盤」代表這檔股票有自己的上漲理由,不只是水漲船高。",
+  "RSI (14)":"相對強弱指標,0~100。>70 稱「超買」(漲太快,小心回檔)、<30 稱「超賣」(跌太深,可能反彈)。50 上下代表多空均衡。",
+  "MACD 柱狀":"衡量「漲跌動能」的指標。柱狀由負轉正 = 動能轉強;由正轉負 = 動能轉弱。數值大小不重要,重點是正負與方向變化。",
+  "布林通道 %B":"以 20 日均線為中心、上下各 2 個標準差畫出通道。%B 接近 1 = 貼近上軌(強勢但可能過熱);接近 0 = 貼近下軌(弱勢但可能超跌);0.5 = 正中間。",
+  "ADX (14)":"趨勢強度指標(不分漲跌方向)。>25 = 趨勢強勁、20~25 = 趨勢成形中、<20 = 沒有明顯趨勢(盤整)。本 App 的趨勢判定要求 ADX ≥ 20。",
+  "年化波動率":"股價波動的劇烈程度,換算成年。>40% 屬高波動(賺賠都快)、<25% 較平穩。",
+  "支撐位":"近 60 個交易日的最低價附近。跌到這裡常有人接手買進,若有效跌破,可能續跌一段,常被視為趨勢轉弱警訊。",
+  "壓力位":"近 60 個交易日的最高價附近。漲到這裡常遇到獲利了結賣壓,若有效突破(站穩),常代表趨勢延續或加速。",
+  "本益比":"股價 ÷ 每股盈餘(EPS)。代表「用幾年的獲利買回股價」。本益比 40 倍比 20 倍貴,但高成長公司通常本益比較高。「預估本益比」用的是未來一年的預估獲利。",
+  "市值":"股價 × 流通股數 = 整間公司的總價格。市值越大通常越穩定、波動較小;兆美元等級就是全球最大的一批公司。",
+  "本益比(近四季)":"股價 ÷ 過去四季每股盈餘(EPS)。代表「用幾年的獲利才能買回股價」,是衡量貴或便宜最常用的指標。和同產業、和自己的歷史比較才有意義;高成長公司通常本益比較高。",
+  "預估本益比":"用「未來一年的預估獲利」算的本益比。若明顯低於近四季本益比,代表市場預期獲利會成長;反之則預期衰退。預估可能不準,僅供參考。",
+  "EPS 年增率":"每股盈餘(公司每一股賺多少錢)和去年同期相比的成長率。正數代表越賺越多;高成長是支撐高本益比的理由,成長放緩常引發股價回檔。",
+  "營收年增率":"營業收入(賣產品/服務收到的錢)和去年同期相比的成長率。比 EPS 更不容易被會計手法影響,看成長動能很實用。",
+  "股息殖利率":"每年配發的現金股利 ÷ 股價。像是「持有的利息」;成長型公司通常配很少(把錢拿去擴張),高殖利率不一定比較好。",
+  "財報":"美股公司每季公布的成績單。公布日前後股價常大幅波動(±5~10% 很常見),新手請特別留意財報日。"
+};
+function showGloss(k){
+  document.getElementById("mTitle").textContent = k;
+  document.getElementById("mBody").textContent = GLOSSARY[k] || "";
+  document.getElementById("modalBg").classList.add("show");
+}
+document.getElementById("upd").textContent = "資料更新: " + D.updated;
+const screen = document.getElementById("screen");
+let chart = null;
+
+function renderWatch(){
+  screen.innerHTML = `<p class="hint">點任一檔看完整分析。圖示 = 目前趨勢判定:📈 上升 📉 下降 ↔️ 盤整(每日更新;美股慣例綠漲紅跌)</p>` +
+  Object.entries(D.stocks).map(([k,s])=>{
+    const c = s.close, last = c[c.length-1], chg = ((last/c[c.length-2]-1)*100).toFixed(2);
+    const cls = chg>=0 ? "up":"down", sign = chg>=0 ? "+":"";
+    const earn = (s.daysToEarnings!==null && s.daysToEarnings<=14) ? `<span class="earn-chip">⚠️ ${s.daysToEarnings} 天後財報</span>` : "";
+    return `<div class="stock-row" onclick="renderDetail('${k}')">
+      <div class="t-ico">${trendIcon[s.trend]}</div>
+      <div class="name"><b>${s.name}</b><span style="color:${trendColor[s.trend]}">${s.trendTerm}</span>${earn}</div>
+      <div class="px"><b>US$${last.toLocaleString()}</b><span class="pct ${cls}">${sign}${chg}%</span></div>
+    </div>`;
+  }).join("");
+}
+
+function renderDetail(key){
+  const s = D.stocks[key], c = s.close, last = c[c.length-1];
+  const earnTxt = s.daysToEarnings!==null
+    ? `<div class="earnbar"><div class="n">${s.daysToEarnings}</div>
+       <div class="t"><b>天後公布財報(${s.nextEarnings})</b><span>財報前後波動通常加大,點<span class="k" style="cursor:pointer;color:var(--blue)" onclick="showGloss('財報')">這裡</span>了解財報</span></div></div>`
+    : "";
+  screen.innerHTML = `
+    <button class="back" onclick="renderWatch()">‹ 返回自選股</button>
+    <div class="det-head">
+      <div><h2>${s.name}</h2><div class="sub">${key}・${s.sub}</div></div>
+      <div class="det-price"><b>US$${last.toLocaleString()}</b></div>
+    </div>
+    <div class="trend-card trend-${s.trend}">
+      <span class="term">${trendIcon[s.trend]} ${s.trendTerm}</span><span class="badge">技術分析判定・每日更新</span>
+      <p>${s.trendDesc}</p>
+    </div>
+    ${earnTxt}
+    <div class="sr">
+      <div class="box"><b class="b-bear" onclick="showGloss('支撐位')" style="cursor:pointer">${s.support.toLocaleString()}</b><span>支撐位(${s.supportPct}%)</span></div>
+      <div class="box"><b class="b-bull" onclick="showGloss('壓力位')" style="cursor:pointer">${s.resistance.toLocaleString()}</b><span>壓力位(+${s.resistancePct}%)</span></div>
+    </div>
+    <div class="summary"><div class="tag">📋 白話摘要(每日更新)</div><p>${s.summary}</p></div>
+    <div class="card">
+      <h3>近 180 個交易日:股價、成交量、大盤對照(◆ = 重大波動日)</h3>
+      <div class="chart-wrap"><canvas id="cv"></canvas></div>
+      <div class="legend"><span><i style="background:#60a5fa"></i>收盤價</span>
+        <span><i style="background:#9ca3af"></i>S&P 500(等比例)</span>
+        <span><i style="background:#374f6b"></i>成交量</span>
+        <span><i style="background:#22c55e"></i>大漲日</span><span><i style="background:#ef4444"></i>大跌日</span></div>
+    </div>
+    <div class="card"><h3>技術指標面板(點藍字看解釋)</h3>
+      <table class="ind">${s.indicators.map(i=>`<tr>
+        <td class="k" onclick="showGloss('${i.key}')">${i.key}</td>
+        <td class="v">${i.value}</td>
+        <td class="r b-${i.bias}">${i.read}</td></tr>`).join("")}
+      </table>
+    </div>
+    <div class="card"><h3>基本面(值不值得的參考,點藍字看解釋)</h3>
+      <table class="ind">${s.fundamentals.map(f=>`<tr>
+        <td class="k" onclick="showGloss('${f.key}')">${f.key}</td><td class="v r" style="text-align:right">${f.value}</td></tr>`).join("")}
+      </table>
+    </div>
+    <div class="card"><h3>近期重大波動日</h3>
+      ${s.price_events.slice().reverse().map(e=>`<div class="event">
+        <div class="dot" style="background:${e.pct>0?'#22c55e':'#ef4444'}"></div>
+        <div class="ev-t"><b>${e.title}</b><span class="date">${e.date}</span></div></div>`).join("") || '<p class="hint">近期無重大波動</p>'}
+    </div>
+    <div class="card news"><h3>最新相關新聞(多空判讀為自動產生,僅供參考)</h3>
+      ${s.news.map(n=>`<a href="${n.url}" target="_blank">${n.title}</a>
+        <div class="nsum"><span class="b-${n.sent==='pos'?'bull':(n.sent==='neg'?'bear':'neutral')}">${n.sent==='pos'?'📈':(n.sent==='neg'?'📉':'➖')} ${n.sentLabel}</span>:${n.reason}</div>
+        <div class="meta">${n.publisher}・${n.date}</div>`).join("") || '<p class="hint">暫無新聞</p>'}
+    </div>`;
+  drawChart(s);
+}
+
+function drawChart(s){
+  if(chart) chart.destroy();
+  const evMap = {};
+  s.price_events.forEach(e=>{
+    const md = e.date.slice(5).replace("-","/").replace(/^0/,"").replace("/0","/");
+    evMap[md] = e;
+  });
+  const norm = d => d.replace(/^0/,"").replace("/0","/");
+  const evPts = s.dates.map((d,i)=> evMap[norm(d)] ? s.close[i] : null);
+  const evColors = s.dates.map(d=> evMap[norm(d)] ? (evMap[norm(d)].pct>0?'#22c55e':'#ef4444') : 'transparent');
+  chart = new Chart(document.getElementById("cv"), {
+    data:{labels:s.dates, datasets:[
+      {type:"line", data:s.close, borderColor:"#60a5fa", borderWidth:2, pointRadius:0, tension:.3, yAxisID:"y", order:1},
+      {type:"line", data:s.spx, borderColor:"#9ca3af", borderWidth:1.2, borderDash:[4,4], pointRadius:0, tension:.3, yAxisID:"y", order:2},
+      {type:"line", data:evPts, showLine:false, pointRadius:5, pointHoverRadius:7, pointStyle:"rectRot",
+       pointBackgroundColor:evColors, pointBorderColor:"#fff", pointBorderWidth:1, yAxisID:"y", order:0},
+      {type:"bar", data:s.volume, backgroundColor:"#374f6b", yAxisID:"y1", order:3}
+    ]},
+    options:{responsive:true, maintainAspectRatio:false, interaction:{intersect:false,mode:"index"},
+      plugins:{legend:{display:false}, tooltip:{callbacks:{label:(c)=>{
+        if(c.datasetIndex===2 && c.raw!==null){const e=evMap[norm(s.dates[c.dataIndex])]; return "📌 "+(e?e.title:"");}
+        if(c.datasetIndex===0) return "股價 US$"+c.raw.toLocaleString();
+        if(c.datasetIndex===1) return "S&P500(等比例) "+c.raw.toLocaleString();
+        if(c.datasetIndex===3) return "成交量 "+(c.raw/1e6).toFixed(1)+"M";
+        return null;}}}},
+      scales:{x:{ticks:{color:"#5a6478",maxTicksLimit:6,font:{size:10}},grid:{display:false}},
+              y:{position:"right",ticks:{color:"#5a6478",font:{size:10}},grid:{color:"rgba(255,255,255,.05)"}},
+              y1:{display:false,max:(Math.max.apply(null,s.volume))*4}}}});
+}
+
+function renderLearn(){
+  const faqs = [
+    ["這個 App 在做什麼?不做什麼?","它描述「現在的趨勢與事實」:趨勢判定、技術指標、基本面、財報日、新聞。它不預測未來、不給買賣建議——因為沒有任何工具能穩定預測股價。看懂現況後,買賣由你自己決定。"],
+    ["上升/下降/盤整怎麼判定?","技術分析標準定義:① 上升趨勢 = 股價站上20日均線、均線多頭排列(20日>60日)、60日均線向上、ADX≥20。② 下降趨勢 = 完全相反。③ 盤整 = ADX<20(趨勢強度不足)或均線糾結。點指標面板的藍字看各術語解釋。"],
+    ["支撐位、壓力位怎麼用?","支撐 = 近60日最低價、壓力 = 近60日最高價。盤整時股價常在兩者之間來回;有效突破壓力(站穩幾天)常代表趨勢轉強,有效跌破支撐則轉弱。許多人以此設定停損點:例如跌破支撐就出場。"],
+    ["趨勢判定會不會錯?","會。技術分析描述的是「目前的結構」,不保證延續——突發新聞、財報意外都可能瞬間改變趨勢。所以 App 同時給你財報倒數與新聞,把「已知的風險時點」先告訴你。"],
+    ["為什麼要看相對大盤強弱?","個股漲 3% 但大盤漲 5%,其實是弱。「強於大盤」的股票有自己的上漲理由;「弱於大盤」即使在漲,也要小心只是被大盤拉著走,大盤一跌它跌更多。"],
+    ["基本面數字怎麼看?","本益比(P/E)代表貴或便宜:相對同業與自己的歷史比較才有意義。EPS/營收年增率代表成長動能:高成長可以支撐高本益比;成長放緩而本益比仍高,就是風險。"],
+    ["重大波動日是什麼?","單日漲跌超過 ±4% 的日子,通常代表有大事(財報、產業消息、大盤恐慌)。圖上的菱形標記就是這些日子,可對照新聞了解原因。"],
+    ["美股顏色為什麼綠漲紅跌?","美國慣例與台灣相反。本 App 採美股慣例:綠=漲、紅=跌。"],
+    ["資料多久更新?","部署在 GitHub 後每個交易日收盤後自動更新(台灣時間早上約 6 點);手機隨時打開都是最新。資料來源 Yahoo Finance,非即時報價。"],
+    ["新手建議?","① 先觀察幾週,熟悉趨勢判定與指標 ② 只投入虧光也不影響生活的錢 ③ 留意財報日,新手可避開財報前後進出 ④ 分散投資,別把錢押在一檔。"]
+  ];
+  screen.innerHTML = `<p class="hint">點擊展開,每篇 30 秒讀完。</p>` +
+    faqs.map(f=>`<div class="card faq" onclick="this.classList.toggle('open')"><b>▸ ${f[0]}</b><p>${f[1]}</p></div>`).join("");
+}
+
+document.querySelectorAll("nav button").forEach(b=>b.addEventListener("click",()=>{
+  document.querySelectorAll("nav button").forEach(x=>x.classList.remove("active"));
+  b.classList.add("active");
+  ({watch:renderWatch, learn:renderLearn})[b.dataset.tab]();
+}));
+renderWatch();
+</script>
+</body>
+</html>
