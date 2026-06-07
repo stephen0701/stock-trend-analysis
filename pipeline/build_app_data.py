@@ -6,7 +6,7 @@ build_app_data.py — 整合所有資料,產生 App 用的 data.js
 """
 import json
 import os
-from datetime import datetime, date
+from datetime import datetime, date, timezone, timedelta
 
 import numpy as np
 import pandas as pd
@@ -255,7 +255,9 @@ def main():
     spx_df = pd.read_csv(os.path.join(RAW, "GSPC.csv"), parse_dates=["Date"], index_col="Date")
     spx = spx_df["Close"]
 
-    data = {"updated": datetime.now().strftime("%Y-%m-%d %H:%M"), "stocks": {}}
+    TPE = timezone(timedelta(hours=8))
+    now_tpe = datetime.now(timezone.utc).astimezone(TPE).strftime("%Y-%m-%d %H:%M")
+    data = {"updated": now_tpe + " (台灣時間)", "stocks": {}}
     for t, meta in INFO.items():
         df = pd.read_csv(os.path.join(RAW, t + ".csv"), parse_dates=["Date"], index_col="Date")
         tech = technicals(df, spx)

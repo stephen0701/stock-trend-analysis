@@ -1,5 +1,5 @@
 {
-  "updated": "2026-06-05 22:56",
+  "updated": "2026-06-07 14:11",
   "stocks": {
     "NVDA": {
       "price_events": [
@@ -78,76 +78,76 @@
       ],
       "news": [
         {
-          "title": "Chip sell-off rattles markets",
+          "title": "AI stock mania is taking over the markets in 2026",
           "sent": "neu",
           "sentLabel": "中性",
           "reason": "一般報導,無明顯多空訊息",
-          "date": "2026-06-05",
-          "url": "https://finance.yahoo.com/video/chip-sell-off-rattles-markets-210216273.html",
-          "publisher": "Yahoo Finance Video"
-        },
-        {
-          "title": "SpaceX to rent AI capacity to Google for $920 million per month",
-          "sent": "neu",
-          "sentLabel": "中性",
-          "reason": "一般報導,無明顯多空訊息",
-          "date": "2026-06-05",
-          "url": "https://finance.yahoo.com/sectors/technology/article/spacex-to-rent-ai-capacity-to-google-for-920-million-per-month-200639544.html",
+          "date": "2026-06-07",
+          "url": "https://finance.yahoo.com/markets/article/ai-stock-mania-is-taking-over-the-markets-in-2026-123000964.html",
           "publisher": "Yahoo Finance"
         },
         {
-          "title": "The stock market's scorching run means the rich will keep getting richer: Chart",
+          "title": "Wall Street's hottest trade is cracking in a trillion-dollar wipeout",
           "sent": "neu",
           "sentLabel": "中性",
           "reason": "一般報導,無明顯多空訊息",
           "date": "2026-06-05",
-          "url": "https://finance.yahoo.com/markets/article/the-stock-markets-scorching-run-means-the-rich-will-keep-getting-richer-chart-135939239.html",
+          "url": "https://finance.yahoo.com/markets/article/wall-streets-hottest-trade-is-cracking-in-a-trillion-dollar-wipeout-184540683.html",
           "publisher": "Yahoo Finance"
         },
         {
-          "title": "Stocks making big moves this week: Okta, TETRA Technologies, Fluence Energy, Verizon, and Cloudflare",
+          "title": "Here Are 5 AI-Related Stocks to Buy and Hold for the Next 5 Years",
           "sent": "neu",
           "sentLabel": "中性",
           "reason": "一般報導,無明顯多空訊息",
-          "date": "2026-06-05",
-          "url": "https://finance.yahoo.com/markets/stocks/articles/stocks-making-big-moves-week-223214227.html",
-          "publisher": "StockStory"
-        },
-        {
-          "title": "Berkshire Hathaway Just Agreed to Put $10 Billion Into Alphabet's AI Build-Out. Should Investors Follow?",
-          "sent": "neu",
-          "sentLabel": "中性",
-          "reason": "一般報導,無明顯多空訊息",
-          "date": "2026-06-05",
-          "url": "https://www.fool.com/investing/2026/06/05/berkshire-hathaway-just-put-10-billion-into-alphab/",
+          "date": "2026-06-07",
+          "url": "https://www.fool.com/investing/2026/06/07/here-are-5-ai-related-stocks-to-buy-and-hold-for/",
           "publisher": "Motley Fool"
         },
         {
-          "title": "Turning 62 in 2026? You May Not Be Able to Apply for Social Security as Soon as You'd Hoped.",
+          "title": "1 Unstoppable Stock to Buy Before It Joins Broadcom in the $1 Trillion Club",
           "sent": "neu",
           "sentLabel": "中性",
           "reason": "一般報導,無明顯多空訊息",
-          "date": "2026-06-05",
-          "url": "https://www.fool.com/retirement/2026/06/05/turning-62-in-2026-you-may-not-be-able-to-apply-fo/",
+          "date": "2026-06-07",
+          "url": "https://www.fool.com/investing/2026/06/07/1-unstoppable-stock-to-buy-before-it-joins-broadco/",
           "publisher": "Motley Fool"
         },
         {
-          "title": "Marvell stock pops after S&P 500 inclusion announcement",
+          "title": "The IPO Market Is Heating Up Again. These Financial Stocks Stand to Win.",
           "sent": "neu",
           "sentLabel": "中性",
           "reason": "一般報導,無明顯多空訊息",
-          "date": "2026-06-05",
-          "url": "https://finance.yahoo.com/markets/stocks/articles/marvell-stock-pops-p-500-221524366.html",
-          "publisher": "Investing.com"
+          "date": "2026-06-07",
+          "url": "https://www.fool.com/investing/2026/06/07/the-ipo-market-is-heating-up-again-these-financial/",
+          "publisher": "Motley Fool"
         },
         {
-          "title": "Stock Market Today, June 5: Broadcom Falls as Strong AI Results Fail to Lift Guidance",
-          "sent": "neg",
-          "sentLabel": "偏負面",
-          "reason": "股價走弱或遭拋售",
-          "date": "2026-06-05",
-          "url": "https://www.fool.com/coverage/stock-market-today/2026/06/05/stock-market-today-june-5-broadcom-falls-as-strong-ai-results-fail-to-lift-guidance/",
+          "title": "Mizuho Strategist: Healthcare Is Now a Value Sector as Pharma Stocks Underperform Tech",
+          "sent": "neu",
+          "sentLabel": "中性",
+          "reason": "一般報導,無明顯多空訊息",
+          "date": "2026-06-07",
+          "url": "https://247wallst.com/investing/2026/06/07/mizuho-strategist-healthcare-is-now-a-value-sector-as-pharma-stocks-underperform-tech/",
+          "publisher": "24/7 Wall St."
+        },
+        {
+          "title": "Yikes! The AI Data Center Build-Out Is Cannibalizing a $1 Trillion Catalyst That's Powered the Trump Bull Market Higher.",
+          "sent": "neu",
+          "sentLabel": "中性",
+          "reason": "一般報導,無明顯多空訊息",
+          "date": "2026-06-07",
+          "url": "https://www.fool.com/investing/2026/06/07/yikes-ai-build-out-1-trillion-trump-bull-market/",
           "publisher": "Motley Fool"
+        },
+        {
+          "title": "The Unstoppable Space ETF Rally Means UFO’s 138% Surge Still Has Room to Run",
+          "sent": "pos",
+          "sentLabel": "偏正面",
+          "reason": "股價強勢上攻",
+          "date": "2026-06-07",
+          "url": "https://247wallst.com/investing/2026/06/07/the-unstoppable-space-etf-rally-means-ufos-138-surge-still-has-room-to-run/",
+          "publisher": "24/7 Wall St."
         }
       ]
     },
@@ -228,76 +228,76 @@
       ],
       "news": [
         {
-          "title": "Tech stocks today: Nvidia stock drops 6% in ugly day for chip stocks",
-          "sent": "neg",
-          "sentLabel": "偏負面",
-          "reason": "股價走弱或遭拋售",
-          "date": "2026-06-01",
-          "url": "https://finance.yahoo.com/sectors/technology/live/tech-stocks-today-nvidia-stock-drops-6-in-ugly-day-for-chip-stocks-100000734.html",
-          "publisher": "Yahoo Finance"
-        },
-        {
-          "title": "SpaceX to rent AI capacity to Google for $920 million per month",
+          "title": "Here Are 5 AI-Related Stocks to Buy and Hold for the Next 5 Years",
           "sent": "neu",
           "sentLabel": "中性",
           "reason": "一般報導,無明顯多空訊息",
-          "date": "2026-06-05",
-          "url": "https://finance.yahoo.com/sectors/technology/article/spacex-to-rent-ai-capacity-to-google-for-920-million-per-month-200639544.html",
-          "publisher": "Yahoo Finance"
-        },
-        {
-          "title": "Berkshire Hathaway Just Agreed to Put $10 Billion Into Alphabet's AI Build-Out. Should Investors Follow?",
-          "sent": "neu",
-          "sentLabel": "中性",
-          "reason": "一般報導,無明顯多空訊息",
-          "date": "2026-06-05",
-          "url": "https://www.fool.com/investing/2026/06/05/berkshire-hathaway-just-put-10-billion-into-alphab/",
+          "date": "2026-06-07",
+          "url": "https://www.fool.com/investing/2026/06/07/here-are-5-ai-related-stocks-to-buy-and-hold-for/",
           "publisher": "Motley Fool"
         },
         {
-          "title": "Oracle Stock Has Returned $54 Billion To Shareholders. Can It Continue?",
+          "title": "Direxion’s 3x Tech ETF TECL Collapsed 19.93% Friday While XLK Fell Just 6.66%: Here’s Why",
+          "sent": "neu",
+          "sentLabel": "中性",
+          "reason": "一般報導,無明顯多空訊息",
+          "date": "2026-06-07",
+          "url": "https://247wallst.com/investing/2026/06/07/direxions-3x-tech-etf-tecl-collapsed-19-93-friday-while-xlk-fell-just-6-66-heres-why/",
+          "publisher": "24/7 Wall St."
+        },
+        {
+          "title": "Why UBS remains bullish on the hyperscaler stocks despite capex concerns",
+          "sent": "neu",
+          "sentLabel": "中性",
+          "reason": "一般報導,無明顯多空訊息",
+          "date": "2026-06-07",
+          "url": "https://finance.yahoo.com/sectors/technology/articles/why-ubs-remains-bullish-hyperscaler-125302633.html",
+          "publisher": "Investing.com"
+        },
+        {
+          "title": "Google’s Unique Approach to Getting Data Centers Built",
+          "sent": "neu",
+          "sentLabel": "中性",
+          "reason": "一般報導,無明顯多空訊息",
+          "date": "2026-06-07",
+          "url": "https://www.wsj.com/tech/ai/googles-unique-approach-to-getting-data-centers-built-2cfae652?siteid=yhoof2&yptr=yahoo",
+          "publisher": "The Wall Street Journal"
+        },
+        {
+          "title": "Dow Jones Futures Due Amid Market Rally's First Real Test; SpaceX IPO, Apple, Oracle Ahead",
+          "sent": "neu",
+          "sentLabel": "中性",
+          "reason": "一般報導,無明顯多空訊息",
+          "date": "2026-06-07",
+          "url": "https://www.investors.com/market-trend/stock-market-today/dow-jones-futures-what-to-do-market-rally-test-spacex-ipo-apple-oracle/?src=A00220&yptr=yahoo",
+          "publisher": "Investor's Business Daily"
+        },
+        {
+          "title": "AIQ Turned $10,000 Into $13,400 in Six Months as AI Chips Soared 34% YTD",
+          "sent": "neu",
+          "sentLabel": "中性",
+          "reason": "一般報導,無明顯多空訊息",
+          "date": "2026-06-07",
+          "url": "https://247wallst.com/investing/2026/06/07/aiq-turned-10000-into-13400-in-six-months-as-ai-chips-soared-34-ytd/",
+          "publisher": "24/7 Wall St."
+        },
+        {
+          "title": "The Anthropic IPO Could Make These 5 AI Stocks Unexpected Winners",
+          "sent": "neu",
+          "sentLabel": "中性",
+          "reason": "一般報導,無明顯多空訊息",
+          "date": "2026-06-07",
+          "url": "https://www.fool.com/investing/2026/06/07/anthropic-ipo-make-ai-stocks-winner-cls-crdo-alab/",
+          "publisher": "Motley Fool"
+        },
+        {
+          "title": "The 4 Best \"Magnificent Seven\" Stocks to Buy Now",
           "sent": "pos",
           "sentLabel": "偏正面",
-          "reason": "展望調升或分析師看好",
-          "date": "2026-06-05",
-          "url": "https://www.trefis.com/articles/601600/years-of-rewards-54-bil-from-oracle-stock/2026-06-05",
-          "publisher": "Trefis"
-        },
-        {
-          "title": "Nasdaq Posts Worst Drop Since April 2025, S&P 500 And Dow Drop As Strong Jobs Data Ignites Rate Hike Bets — TSLA, GME, META, BA, MSTR, GOOGL In Focus",
-          "sent": "neu",
-          "sentLabel": "中性",
-          "reason": "一般報導,無明顯多空訊息",
-          "date": "2026-06-05",
-          "url": "https://stocktwits.com/news-articles/markets/equity/nasdaq-posts-worst-drop-since-april-2025-s-and-p-500-and-dow-drop-as-strong-jobs-data-ignites-rate-hike-bets-tsla-gme-meta-ba-mstr-in-focus/cZ0FUXKReCv",
-          "publisher": "Stocktwits"
-        },
-        {
-          "title": "The Tech Rally Goes in Reverse as Markets Anticipate Tighter Money",
-          "sent": "neu",
-          "sentLabel": "中性",
-          "reason": "一般報導,無明顯多空訊息",
-          "date": "2026-06-05",
-          "url": "https://www.barrons.com/articles/sp-500-nasdaq-tech-stocks-spacex-ipo-1e444637?siteid=yhoof2&yptr=yahoo",
-          "publisher": "Barrons.com"
-        },
-        {
-          "title": "Decoding AVGO Stock's Premium Valuation",
-          "sent": "neu",
-          "sentLabel": "中性",
-          "reason": "一般報導,無明顯多空訊息",
-          "date": "2026-06-05",
-          "url": "https://www.trefis.com/articles/601615/decoding-avgo-stocks-premium-valuation-2/2026-06-05",
-          "publisher": "Trefis"
-        },
-        {
-          "title": "SpaceX Inks $30 Billion Computing Power Deal With Google",
-          "sent": "pos",
-          "sentLabel": "偏正面",
-          "reason": "新產品、合作案或獲准消息",
-          "date": "2026-06-05",
-          "url": "https://finance.yahoo.com/video/spacex-inks-30-billion-computing-211633710.html",
-          "publisher": "Bloomberg"
+          "reason": "媒體看多評論",
+          "date": "2026-06-07",
+          "url": "https://www.fool.com/investing/2026/06/06/the-4-best-magnificent-seven-stocks-to-buy-now/",
+          "publisher": "Motley Fool"
         }
       ]
     },
@@ -378,76 +378,76 @@
       ],
       "news": [
         {
-          "title": "Dow Jones Futures: What To Do As Market Rally Faces First Real Test; SpaceX IPO, Apple, Oracle Loom",
+          "title": "80% of Wegovy Pill Users Never Took a Weight Loss Drug Before. Does This Number Change the Entire Novo Nordisk Bear Case?",
           "sent": "neu",
           "sentLabel": "中性",
           "reason": "一般報導,無明顯多空訊息",
-          "date": "2026-06-05",
+          "date": "2026-06-07",
+          "url": "https://www.fool.com/investing/2026/06/07/80-of-wegovy-pill-users-never-took-a-weight-loss/",
+          "publisher": "Motley Fool"
+        },
+        {
+          "title": "Dow Jones Futures Due Amid Market Rally's First Real Test; SpaceX IPO, Apple, Oracle Ahead",
+          "sent": "neu",
+          "sentLabel": "中性",
+          "reason": "一般報導,無明顯多空訊息",
+          "date": "2026-06-07",
           "url": "https://www.investors.com/market-trend/stock-market-today/dow-jones-futures-what-to-do-market-rally-test-spacex-ipo-apple-oracle/?src=A00220&yptr=yahoo",
           "publisher": "Investor's Business Daily"
         },
         {
-          "title": "Dow Jones Futures Rise, Techs Fall As AI Trade Cools; Jobs Report Looms",
+          "title": "Your Weight-Loss Drugs Are Next on the Corporate Chopping Block",
           "sent": "neu",
           "sentLabel": "中性",
           "reason": "一般報導,無明顯多空訊息",
-          "date": "2026-06-05",
-          "url": "https://www.investors.com/market-trend/stock-market-today/dow-jones-futures-ai-stocks-broadcom-ciena-jobs-report/?src=A00220&yptr=yahoo",
-          "publisher": "Investor's Business Daily"
+          "date": "2026-06-07",
+          "url": "https://www.wsj.com/health/pharma/your-weight-loss-drugs-are-next-on-the-corporate-chopping-block-19ec05bd?siteid=yhoof2&yptr=yahoo",
+          "publisher": "The Wall Street Journal"
         },
         {
-          "title": "UnitedHealth, Eli Lilly Lead Healthcare Rebound as Investors Seek Stability",
-          "sent": "neu",
-          "sentLabel": "中性",
-          "reason": "一般報導,無明顯多空訊息",
-          "date": "2026-06-05",
-          "url": "https://finance.yahoo.com/sectors/healthcare/articles/unitedhealth-eli-lilly-lead-healthcare-183218104.html",
-          "publisher": "GuruFocus.com"
-        },
-        {
-          "title": "Novo And Lilly Push Beyond US As Only 1%-2% Use Obesity Drugs Globally",
-          "sent": "neu",
-          "sentLabel": "中性",
-          "reason": "一般報導,無明顯多空訊息",
-          "date": "2026-06-05",
-          "url": "https://finance.yahoo.com/sectors/healthcare/articles/novo-lilly-push-beyond-us-183108101.html",
-          "publisher": "GuruFocus.com"
-        },
-        {
-          "title": "GLP-1 Sales Forecast Jumps To $150 Billion By 2030",
+          "title": "Eli Lilly Expands Beyond Obesity With US$4b Vaccine And Genetic Bets",
           "sent": "pos",
           "sentLabel": "偏正面",
-          "reason": "股價強勢上攻",
-          "date": "2026-06-05",
-          "url": "https://finance.yahoo.com/sectors/healthcare/articles/glp-1-sales-forecast-jumps-171933527.html",
-          "publisher": "GuruFocus.com"
+          "reason": "新產品、合作案或獲准消息",
+          "date": "2026-06-07",
+          "url": "https://finance.yahoo.com/sectors/healthcare/articles/eli-lilly-expands-beyond-obesity-041932851.html",
+          "publisher": "Simply Wall St."
         },
         {
-          "title": "Here’s Why Eli Lilly (LLY) is Among the 10 Best American Stocks to Buy and Hold for the Next Decade",
+          "title": "Eli Lilly makes surprising retreat from major market",
           "sent": "neu",
           "sentLabel": "中性",
           "reason": "一般報導,無明顯多空訊息",
-          "date": "2026-06-05",
-          "url": "https://finance.yahoo.com/markets/stocks/articles/why-eli-lilly-lly-among-164639188.html",
-          "publisher": "Insider Monkey"
+          "date": "2026-06-06",
+          "url": "https://www.thestreet.com/investing/eli-lilly-makes-a-surprising-retreat-from-germany",
+          "publisher": "TheStreet"
         },
         {
-          "title": "Why Health Care's Seasonal Tailwind Looks Especially Compelling This Year",
+          "title": "Micron Makes the $1 Trillion Club a Little More Crowded",
           "sent": "neu",
           "sentLabel": "中性",
           "reason": "一般報導,無明顯多空訊息",
-          "date": "2026-06-05",
-          "url": "https://finance.yahoo.com/sectors/healthcare/articles/why-health-cares-seasonal-tailwind-154700743.html",
-          "publisher": "Zacks"
+          "date": "2026-06-06",
+          "url": "https://www.fool.com/investing/2026/06/06/micron-makes-the-usd1-trillion-club-a-little-more-crowded/",
+          "publisher": "Motley Fool"
         },
         {
-          "title": "Jim Cramer Highlights Johnson & Johnson Having No Big Patent Expirations",
+          "title": "Eli Lilly shares phase 3 data on triple agonist weight loss drug retatrutide",
+          "sent": "neg",
+          "sentLabel": "偏負面",
+          "reason": "法律或監管風險",
+          "date": "2026-06-06",
+          "url": "https://finance.yahoo.com/sectors/healthcare/articles/eli-lilly-shares-phase-3-194528467.html",
+          "publisher": "Investing.com"
+        },
+        {
+          "title": "Eli Lilly's $3.8 Billion Vaccine Bets: Here's the Big Story Many Investors Are Missing",
           "sent": "neu",
           "sentLabel": "中性",
           "reason": "一般報導,無明顯多空訊息",
-          "date": "2026-06-05",
-          "url": "https://finance.yahoo.com/markets/stocks/articles/jim-cramer-highlights-johnson-johnson-141423792.html",
-          "publisher": "Insider Monkey"
+          "date": "2026-06-06",
+          "url": "https://www.fool.com/investing/2026/06/06/eli-lillys-38-billion-vaccine-bets-heres-the-big-s/",
+          "publisher": "Motley Fool"
         }
       ]
     }

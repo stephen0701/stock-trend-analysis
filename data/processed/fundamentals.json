@@ -1,27 +1,27 @@
 {
-  "updated": "2026-06-05 22:56",
+  "updated": "2026-06-07 14:11",
   "stocks": {
     "NVDA": {
-      "trailingPE": 31.360857,
+      "trailingPE": 31.457056,
       "forwardPE": 16.172209,
       "earningsGrowth": 2.145,
       "revenueGrowth": 0.852,
-      "dividendYield": 0.46,
+      "dividendYield": 0.49,
       "marketCap": 4967727366144,
       "nextEarnings": "2026-08-26"
     },
     "GOOG": {
-      "trailingPE": 27.899315,
-      "forwardPE": 25.294256,
+      "trailingPE": 27.94194,
+      "forwardPE": 25.292856,
       "earningsGrowth": 0.82,
       "revenueGrowth": 0.218,
       "dividendYield": 0.24,
-      "marketCap": 4449968848896,
+      "marketCap": 4460419481600,
       "nextEarnings": "2026-07-23"
     },
     "LLY": {
-      "trailingPE": 40.22112,
-      "forwardPE": 25.432766,
+      "trailingPE": 40.164005,
+      "forwardPE": 25.43093,
       "earningsGrowth": 1.699,
       "revenueGrowth": 0.555,
       "dividendYield": 0.61,
