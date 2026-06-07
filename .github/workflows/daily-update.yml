@@ -4,6 +4,8 @@ on:
   schedule:
     # UTC 22:00 = 台灣時間早上 6:00(美股已收盤)。週二~週六對應美股週一~週五交易日
     - cron: "0 22 * * 1-5"
+  push:
+    branches: [main]      # 每次 push 到 main 也會自動部署
   workflow_dispatch: {}   # 也可在 GitHub 網頁上手動觸發
 
 permissions:
