@@ -1,12 +1,14 @@
 # -*- coding: utf-8 -*-
 """
 build_app_data.py — 整合所有資料,產生 App 用的 data.js
-內容: 趨勢判定 + 技術指標 + 基本面 + 財報倒數 + 相對大盤強弱 + 支撐壓力 + 量能 + 事件 + 新聞
+內容: 趨勢判定 + 轉換點 + 訊號彙整 + 技術指標 + 基本面 + 財報倒數
+       + 相對大盤強弱 + 支撐壓力 + 多時間維度走勢 + 事件 + 新聞
 """
 import json
 import os
 from datetime import datetime, date
 
+import numpy as np
 import pandas as pd
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -19,10 +21,101 @@ INFO = {
     "GOOG": {"name": "Alphabet (Google)", "sub": "科技/雲端與廣告"},
     "LLY": {"name": "Eli Lilly 禮來", "sub": "醫療健康/製藥"},
 }
+CHART_DAYS = 1260   # 約 5 年日線,前端依時間維度切片
 
 
 def _ema(s, n):
     return s.ewm(span=n, adjust=False).mean()
+
+
+def adx_series(df, n=14):
+    h, l, c = df["High"], df["Low"], df["Close"]
+    tr = pd.concat([(h - l), (h - c.shift()).abs(), (l - c.shift()).abs()], axis=1).max(axis=1)
+    up_m, dn_m = h.diff(), -l.diff()
+    pdm = up_m.where((up_m > dn_m) & (up_m > 0), 0.0)
+    ndm = dn_m.where((dn_m > up_m) & (dn_m > 0), 0.0)
+    atr = tr.ewm(alpha=1 / n, adjust=False).mean()
+    pdi = 100 * pdm.ewm(alpha=1 / n, adjust=False).mean() / atr
+    ndi = 100 * ndm.ewm(alpha=1 / n, adjust=False).mean() / atr
+    dx = 100 * (pdi - ndi).abs() / (pdi + ndi)
+    return dx.ewm(alpha=1 / n, adjust=False).mean()
+
+
+def trend_label(px, m20, m60, m60_rising, adx):
+    """單日趨勢判定,回傳 up/down/range"""
+    if adx >= 20 and px > m20 > m60 and m60_rising:
+        return "up"
+    if adx >= 20 and px < m20 < m60 and not m60_rising:
+        return "down"
+    return "range"
+
+
+def trend_series(df):
+    """逐日計算歷史趨勢標籤(用於找轉換點)"""
+    c = df["Close"]
+    m20, m60 = c.rolling(20).mean(), c.rolling(60).mean()
+    adx = adx_series(df)
+    m60_rising = m60 > m60.shift(5)
+    labels = []
+    for i in range(len(c)):
+        if i < 60 or pd.isna(adx.iloc[i]):
+            labels.append(None)
+        else:
+            labels.append(trend_label(c.iloc[i], m20.iloc[i], m60.iloc[i],
+                                       bool(m60_rising.iloc[i]), adx.iloc[i]))
+    return pd.Series(labels, index=c.index)
+
+
+TERM = {"up": "上升趨勢", "down": "下降趨勢", "range": "盤整(區間震盪)"}
+
+
+def regime_info(df):
+    """轉換點三層: 歷史轉換點 / 目前狀態維持天數+轉換日 / 確認中提示"""
+    ts = trend_series(df).dropna()
+    if ts.empty:
+        return {}
+    # 歷史轉換點(最近 5 年內)
+    changes = []
+    prev = None
+    for d, lab in ts.items():
+        if prev is not None and lab != prev:
+            changes.append({"date": d.strftime("%Y-%m-%d"),
+                            "from": prev, "to": lab,
+                            "fromTerm": TERM[prev], "toTerm": TERM[lab]})
+        prev = lab
+    cur = ts.iloc[-1]
+    # 目前狀態從哪天開始
+    since = ts.index[-1]
+    for d in reversed(ts.index):
+        if ts[d] == cur:
+            since = d
+        else:
+            break
+    held_days = int((ts.index[-1] - since).days)
+    held_bars = int((ts.index >= since).sum())
+    last_change = changes[-1] if changes else None
+
+    # 確認中提示: 目前盤整,但股價剛突破近20日壓力 / 跌破支撐
+    c = df["Close"]
+    h, l = df["High"], df["Low"]
+    px = float(c.iloc[-1])
+    res20 = float(h.iloc[-21:-1].max())
+    sup20 = float(l.iloc[-21:-1].min())
+    pending = None
+    if cur == "range":
+        if px > res20:
+            pending = {"dir": "up", "text": "觀察中:股價剛突破近 20 日高點,可能轉為上升趨勢,但趨勢強度尚未確認(可能為假突破)"}
+        elif px < sup20:
+            pending = {"dir": "down", "text": "觀察中:股價剛跌破近 20 日低點,可能轉為下降趨勢,但尚未確認(可能為假跌破)"}
+    return {
+        "current": cur,
+        "sinceDate": since.strftime("%Y-%m-%d"),
+        "heldDays": held_days,
+        "heldBars": held_bars,
+        "lastChange": last_change,
+        "changes": changes[-30:],   # 近 30 次轉換,給圖標記用
+        "pending": pending,
+    }
 
 
 def technicals(df, spx):
@@ -37,40 +130,27 @@ def technicals(df, spx):
     macd_hist = float((macd_line - _ema(macd_line, 9)).iloc[-1])
     sd = c.rolling(20).std()
     pb = float(((c - (ma20 - 2 * sd)) / (4 * sd)).iloc[-1])
-    tr = pd.concat([(h - l), (h - c.shift()).abs(), (l - c.shift()).abs()], axis=1).max(axis=1)
-    up_m, dn_m = h.diff(), -l.diff()
-    pdm = up_m.where((up_m > dn_m) & (up_m > 0), 0.0)
-    ndm = dn_m.where((dn_m > up_m) & (dn_m > 0), 0.0)
-    atr = tr.ewm(alpha=1 / 14, adjust=False).mean()
-    pdi = 100 * pdm.ewm(alpha=1 / 14, adjust=False).mean() / atr
-    ndi = 100 * ndm.ewm(alpha=1 / 14, adjust=False).mean() / atr
-    dx = 100 * (pdi - ndi).abs() / (pdi + ndi)
-    adx = float(dx.ewm(alpha=1 / 14, adjust=False).mean().iloc[-1])
+    adx = float(adx_series(df).iloc[-1])
     vol_ann = float(c.pct_change().rolling(20).std().iloc[-1]) * (252 ** 0.5) * 100
     m20, m60, m120 = float(ma20.iloc[-1]), float(ma60.iloc[-1]), float(ma120.iloc[-1])
-    ma60_rising = float(ma60.iloc[-1]) > float(ma60.iloc[-6])
+    ma60_rising = m60 > float(ma60.iloc[-6])
 
-    # 相對大盤強弱 (RS): 個股報酬 - S&P500 報酬
     rs = {}
     for label, n in (("1m", 21), ("3m", 63)):
         rs[label] = round(float((c.iloc[-1] / c.iloc[-n - 1] - 1) - (spx.iloc[-1] / spx.iloc[-n - 1] - 1)) * 100, 1)
 
-    # 支撐 / 壓力: 近 60 日最低 / 最高
     support = float(l.tail(60).min())
     resistance = float(h.tail(60).max())
 
-    bull_stack = px > m20 > m60
-    bear_stack = px < m20 < m60
-    if adx >= 20 and bull_stack and ma60_rising:
-        trend, term = "up", "上升趨勢"
+    trend = trend_label(px, m20, m60, ma60_rising, adx)
+    term = TERM[trend]
+    if trend == "up":
         desc = ("多頭排列:股價({:,.0f})站上 20 日均線({:,.0f}),且 20 日均線高於 60 日均線({:,.0f}),"
                 "60 日均線向上。ADX {:.0f} ≥ 20,趨勢明確。").format(px, m20, m60, adx)
-    elif adx >= 20 and bear_stack and not ma60_rising:
-        trend, term = "down", "下降趨勢"
+    elif trend == "down":
         desc = ("空頭排列:股價({:,.0f})跌破 20 日均線({:,.0f}),且 20 日均線低於 60 日均線({:,.0f}),"
                 "60 日均線向下。ADX {:.0f} ≥ 20,趨勢明確。").format(px, m20, m60, adx)
     else:
-        trend, term = "range", "盤整(區間震盪)"
         why = "ADX {:.0f} < 20,趨勢強度不足".format(adx) if adx < 20 else "均線糾結,多空不明"
         desc = ("{}。股價在 20 日均線({:,.0f})與 60 日均線({:,.0f})之間徘徊,"
                 "尚未形成方向,通常等待突破支撐或壓力後再確認。").format(why, m20, m60)
@@ -78,6 +158,8 @@ def technicals(df, spx):
     def bias(b, s):
         return "bull" if b else ("bear" if s else "neutral")
 
+    bull_stack = px > m20 > m60
+    bear_stack = px < m20 < m60
     rsi_read = ("超買(>70,小心過熱)" if rsi > 70 else
                 ("超賣(<30,可能反彈)" if rsi < 30 else
                  ("偏強" if rsi >= 55 else ("偏弱" if rsi <= 45 else "中性"))))
@@ -103,7 +185,20 @@ def technicals(df, spx):
          "read": "高波動(風險大)" if vol_ann > 40 else ("中等波動" if vol_ann > 25 else "低波動"),
          "bias": "neutral"},
     ]
+    # 訊號彙整
+    bull = sum(1 for i in inds if i["bias"] == "bull")
+    bear = sum(1 for i in inds if i["bias"] == "bear")
+    neu = len(inds) - bull - bear
+    if bull >= bear + 2:
+        verdict = "多方訊號較一致,順勢者可留意支撐位附近的進場機會。"
+    elif bear >= bull + 2:
+        verdict = "空方訊號較一致,持有者留意風險,逢反彈至壓力位可考慮減碼。"
+    else:
+        verdict = "多空訊號拉鋸、方向不明朗,觀望為宜,等待趨勢明確再行動。"
+    signals = {"bull": bull, "bear": bear, "neutral": neu, "verdict": verdict}
+
     return {"trend": trend, "trendTerm": term, "trendDesc": desc, "indicators": inds,
+            "signals": signals,
             "support": round(support, 2), "resistance": round(resistance, 2),
             "supportPct": round((support / px - 1) * 100, 1),
             "resistancePct": round((resistance / px - 1) * 100, 1)}
@@ -132,17 +227,23 @@ def fundamentals_card(f):
     ]
 
 
-def plain_summary(t, df, tech, days_to_earnings):
+def plain_summary(t, df, tech, reg, d2e):
     c = df["Close"]
     chg_1m = (c.iloc[-1] / c.iloc[-21] - 1) * 100
     chg_3m = (c.iloc[-1] / c.iloc[-63] - 1) * 100
     name = INFO[t]["name"]
     word = "上漲" if chg_1m > 2 else ("下跌" if chg_1m < -2 else "盤整")
-    s = "{} 近一個月{}({:+.1f}%),近三個月 {:+.1f}%,目前判定為「{}」。".format(name, word, chg_1m, chg_3m, tech["trendTerm"])
+    s = "{} 近一個月{}({:+.1f}%),近三個月 {:+.1f}%,目前判定為「{}」".format(name, word, chg_1m, chg_3m, tech["trendTerm"])
+    if reg.get("heldBars"):
+        s += "(自 {} 起,已維持 {} 個交易日)。".format(reg["sinceDate"], reg["heldBars"])
+    else:
+        s += "。"
     s += "支撐位約 {:,.0f}({:+.1f}%)、壓力位約 {:,.0f}({:+.1f}%)。".format(
         tech["support"], tech["supportPct"], tech["resistance"], tech["resistancePct"])
-    if days_to_earnings is not None:
-        s += " 距下次財報還有 {} 天,財報前後波動通常加大,請留意。".format(days_to_earnings)
+    if reg.get("pending"):
+        s += " " + reg["pending"]["text"] + "。"
+    if d2e is not None:
+        s += " 距下次財報還有 {} 天,財報前後波動通常加大,請留意。".format(d2e)
     return s
 
 
@@ -158,9 +259,10 @@ def main():
     for t, meta in INFO.items():
         df = pd.read_csv(os.path.join(RAW, t + ".csv"), parse_dates=["Date"], index_col="Date")
         tech = technicals(df, spx)
+        reg = regime_info(df)
         f = funda["stocks"].get(t, {})
         ev = events["stocks"][t]
-        tail = df.tail(180)
+        tail = df.tail(CHART_DAYS)
         spx_tail = spx.reindex(tail.index).ffill()
         spx_norm = (spx_tail / spx_tail.iloc[0] * float(tail["Close"].iloc[0])).round(2)
         d2e = None
@@ -174,14 +276,15 @@ def main():
         entry = dict(meta)
         entry.update(tech)
         entry.update({
-            "dates": [x.strftime("%m/%d") for x in tail.index],
+            "regime": reg,
+            "dates": [x.strftime("%Y-%m-%d") for x in tail.index],
             "close": [round(float(x), 2) for x in tail["Close"]],
             "volume": [int(x) for x in tail["Volume"]],
             "spx": [float(x) for x in spx_norm],
             "fundamentals": fundamentals_card(f),
             "nextEarnings": f.get("nextEarnings"),
             "daysToEarnings": d2e,
-            "summary": plain_summary(t, df, tech, d2e),
+            "summary": plain_summary(t, df, tech, reg, d2e),
             "price_events": ev["price_events"],
             "news": ev["news"],
         })
@@ -191,6 +294,11 @@ def main():
     with open(os.path.join(APP, "data.js"), "w", encoding="utf-8") as fp:
         fp.write(js)
     print("app/data.js updated ({})".format(data["updated"]))
+    for t, v in data["stocks"].items():
+        r = v["regime"]
+        print("  {} {} | 維持 {} 日(自 {}) | 訊號 多{}/空{}/中{}".format(
+            t, v["trendTerm"], r.get("heldBars"), r.get("sinceDate"),
+            v["signals"]["bull"], v["signals"]["bear"], v["signals"]["neutral"]))
 
 
 if __name__ == "__main__":

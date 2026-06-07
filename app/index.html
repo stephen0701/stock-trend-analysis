@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>趨勢小幫手</title>
+<title>股市小幫手</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <script src="data.js"></script>
 <style>
@@ -43,6 +43,9 @@
   .summary .tag{font-size:10px;color:var(--accent);margin-bottom:4px;}
   .summary p{color:var(--text);font-size:13px;line-height:1.7;}
   .chart-wrap{position:relative;height:250px;}
+  .tfbar{display:flex;gap:6px;margin-bottom:10px;}
+  .tfbar button{flex:1;background:var(--card2);border:none;color:var(--muted);padding:6px 0;border-radius:8px;font-size:12px;cursor:pointer;}
+  .tfbar button.active{background:var(--accent);color:#fff;}
   .legend{display:flex;gap:12px;font-size:10px;color:var(--muted);margin-top:6px;flex-wrap:wrap;}
   .legend i{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:3px;}
   .event{display:flex;gap:10px;padding:10px 0;border-bottom:1px solid #2a3245;}
@@ -60,6 +63,13 @@
   .trend-card .term{font-size:17px;font-weight:700;color:var(--text);}
   .trend-card .badge{font-size:10px;color:var(--muted);margin-left:8px;}
   .trend-card p{color:#c5cddb;font-size:12.5px;line-height:1.8;margin-top:6px;}
+  .held{font-size:11px;color:var(--muted);margin-top:6px;}
+  .pending{margin-top:8px;padding:8px 10px;border-radius:8px;background:rgba(234,179,8,.12);border:1px solid rgba(234,179,8,.4);color:#f4d35e;font-size:12px;line-height:1.6;}
+  .sigbar{display:flex;gap:8px;margin-bottom:8px;}
+  .sigbar .box{flex:1;border-radius:12px;padding:10px;text-align:center;background:var(--card2);}
+  .sigbar .box b{font-size:20px;display:block;}
+  .sigbar .box span{font-size:10px;color:var(--muted);}
+  .verdict{font-size:12.5px;color:var(--text);line-height:1.7;background:var(--card2);border-radius:10px;padding:10px 12px;}
   table.ind{width:100%;border-collapse:collapse;}
   table.ind td{padding:7px 2px;border-bottom:1px solid #2a3245;font-size:12px;vertical-align:top;}
   table.ind tr:last-child td{border-bottom:none;}
@@ -90,7 +100,7 @@
 </style>
 </head>
 <body>
-  <header class="appbar"><h1>📈 趨勢小幫手</h1><span class="upd" id="upd"></span></header>
+  <header class="appbar"><h1>📊 股市小幫手</h1><span class="upd" id="upd"></span></header>
   <div class="screen" id="screen"></div>
   <div class="disclaimer">⚠️ 本工具描述現況、不預測漲跌、不構成投資建議。買賣決定請自行判斷。</div>
   <nav>
@@ -107,6 +117,8 @@
 const D = window.APP_DATA;
 const trendIcon = {up:"📈", down:"📉", range:"↔️"};
 const trendColor = {up:"#22c55e", down:"#ef4444", range:"#eab308"};
+const TF = {"5天":5, "1月":21, "3月":63, "1年":252, "5年":1260};
+let curTF = "3月";
 const GLOSSARY = {
   "均線排列":"均線 = 過去 N 天收盤價的平均。「多頭排列」指股價 > 20日均線 > 60日均線,代表短中期買進的人都賺錢、上漲結構健康;「空頭排列」相反;「糾結」代表方向不明。",
   "相對大盤強弱":"個股報酬減去同期 S&P 500 大盤報酬。個股漲 3% 但大盤漲 5%,其實是相對弱勢(-2%)。「強於大盤」代表這檔股票有自己的上漲理由,不只是水漲船高。",
@@ -117,7 +129,9 @@ const GLOSSARY = {
   "年化波動率":"股價波動的劇烈程度,換算成年。>40% 屬高波動(賺賠都快)、<25% 較平穩。",
   "支撐位":"近 60 個交易日的最低價附近。跌到這裡常有人接手買進,若有效跌破,可能續跌一段,常被視為趨勢轉弱警訊。",
   "壓力位":"近 60 個交易日的最高價附近。漲到這裡常遇到獲利了結賣壓,若有效突破(站穩),常代表趨勢延續或加速。",
-  "本益比":"股價 ÷ 每股盈餘(EPS)。代表「用幾年的獲利買回股價」。本益比 40 倍比 20 倍貴,但高成長公司通常本益比較高。「預估本益比」用的是未來一年的預估獲利。",
+  "訊號彙整":"把 7 個技術指標各自的方向(偏多/偏空/中性)加總。偏多 = 該指標代表往上的力量較強、偏空 = 往下、中性 = 無方向。多空數字越懸殊代表共識越一致、訊號越清楚;接近時代表多空拉鋸、方向不明。",
+  "轉換點":"趨勢從一種狀態變成另一種(例如盤整→上升)的那一天。注意:轉換點只能事後幾天才能確認,無法當天即時判斷,因為要等均線、ADX 等指標累積出新趨勢的證據。",
+  "大盤(S&P 500)":"美國 500 家最大公司的綜合指數,代表整體美股行情。圖中灰色虛線為大盤(已等比例對齊),個股線在它之上=強於大盤,之下=弱於大盤。",
   "市值":"股價 × 流通股數 = 整間公司的總價格。市值越大通常越穩定、波動較小;兆美元等級就是全球最大的一批公司。",
   "本益比(近四季)":"股價 ÷ 過去四季每股盈餘(EPS)。代表「用幾年的獲利才能買回股價」,是衡量貴或便宜最常用的指標。和同產業、和自己的歷史比較才有意義;高成長公司通常本益比較高。",
   "預估本益比":"用「未來一年的預估獲利」算的本益比。若明顯低於近四季本益比,代表市場預期獲利會成長;反之則預期衰退。預估可能不準,僅供參考。",
@@ -135,6 +149,8 @@ document.getElementById("upd").textContent = "資料更新: " + D.updated;
 const screen = document.getElementById("screen");
 let chart = null;
 
+function fmtMD(d){ const p=d.split("-"); return p[1]+"/"+p[2]; }
+
 function renderWatch(){
   screen.innerHTML = `<p class="hint">點任一檔看完整分析。圖示 = 目前趨勢判定:📈 上升 📉 下降 ↔️ 盤整(每日更新;美股慣例綠漲紅跌)</p>` +
   Object.entries(D.stocks).map(([k,s])=>{
@@ -151,10 +167,16 @@ function renderWatch(){
 
 function renderDetail(key){
   const s = D.stocks[key], c = s.close, last = c[c.length-1];
+  const r = s.regime || {};
   const earnTxt = s.daysToEarnings!==null
     ? `<div class="earnbar"><div class="n">${s.daysToEarnings}</div>
        <div class="t"><b>天後公布財報(${s.nextEarnings})</b><span>財報前後波動通常加大,點<span class="k" style="cursor:pointer;color:var(--blue)" onclick="showGloss('財報')">這裡</span>了解財報</span></div></div>`
     : "";
+  const heldTxt = r.heldBars
+    ? `<div class="held">⏱ 此趨勢自 <b>${r.sinceDate}</b> 起,已維持 <b>${r.heldBars}</b> 個交易日${r.lastChange?`(由「${r.lastChange.fromTerm}」轉入)`:""}。<span class="k" style="color:var(--blue);cursor:pointer" onclick="showGloss('轉換點')">什麼是轉換點?</span></div>`
+    : "";
+  const pendingTxt = r.pending ? `<div class="pending">⚠️ ${r.pending.text}</div>` : "";
+  const sg = s.signals || {bull:0,bear:0,neutral:0,verdict:""};
   screen.innerHTML = `
     <button class="back" onclick="renderWatch()">‹ 返回自選股</button>
     <div class="det-head">
@@ -164,20 +186,31 @@ function renderDetail(key){
     <div class="trend-card trend-${s.trend}">
       <span class="term">${trendIcon[s.trend]} ${s.trendTerm}</span><span class="badge">技術分析判定・每日更新</span>
       <p>${s.trendDesc}</p>
+      ${heldTxt}
+      ${pendingTxt}
     </div>
     ${earnTxt}
+    <div class="card"><h3>訊號彙整(7 個指標的多空共識,點<span class="k" style="cursor:pointer" onclick="showGloss('訊號彙整')">說明</span>)</h3>
+      <div class="sigbar">
+        <div class="box"><b class="b-bull">${sg.bull}</b><span>偏多</span></div>
+        <div class="box"><b class="b-bear">${sg.bear}</b><span>偏空</span></div>
+        <div class="box"><b class="b-neutral">${sg.neutral}</b><span>中性</span></div>
+      </div>
+      <div class="verdict">📌 ${sg.verdict}</div>
+    </div>
     <div class="sr">
       <div class="box"><b class="b-bear" onclick="showGloss('支撐位')" style="cursor:pointer">${s.support.toLocaleString()}</b><span>支撐位(${s.supportPct}%)</span></div>
       <div class="box"><b class="b-bull" onclick="showGloss('壓力位')" style="cursor:pointer">${s.resistance.toLocaleString()}</b><span>壓力位(+${s.resistancePct}%)</span></div>
     </div>
     <div class="summary"><div class="tag">📋 白話摘要(每日更新)</div><p>${s.summary}</p></div>
     <div class="card">
-      <h3>近 180 個交易日:股價、成交量、大盤對照(◆ = 重大波動日)</h3>
+      <h3>走勢圖(◆ = 重大波動日,★ = 趨勢轉換點)</h3>
+      <div class="tfbar" id="tfbar">${Object.keys(TF).map(t=>`<button class="${t===curTF?'active':''}" onclick="setTF('${key}','${t}')">${t}</button>`).join("")}</div>
       <div class="chart-wrap"><canvas id="cv"></canvas></div>
       <div class="legend"><span><i style="background:#60a5fa"></i>收盤價</span>
-        <span><i style="background:#9ca3af"></i>S&P 500(等比例)</span>
+        <span><i style="background:#9ca3af"></i>大盤 S&P 500(等比例)</span>
         <span><i style="background:#374f6b"></i>成交量</span>
-        <span><i style="background:#22c55e"></i>大漲日</span><span><i style="background:#ef4444"></i>大跌日</span></div>
+        <span><i style="background:#a855f7"></i>趨勢轉換點</span></div>
     </div>
     <div class="card"><h3>技術指標面板(點藍字看解釋)</h3>
       <table class="ind">${s.indicators.map(i=>`<tr>
@@ -204,48 +237,64 @@ function renderDetail(key){
   drawChart(s);
 }
 
+function setTF(key, tf){ curTF = tf;
+  document.querySelectorAll("#tfbar button").forEach(b=>b.classList.toggle("active", b.textContent===tf));
+  drawChart(D.stocks[key]);
+}
+
 function drawChart(s){
   if(chart) chart.destroy();
-  const evMap = {};
-  s.price_events.forEach(e=>{
-    const md = e.date.slice(5).replace("-","/").replace(/^0/,"").replace("/0","/");
-    evMap[md] = e;
-  });
-  const norm = d => d.replace(/^0/,"").replace("/0","/");
-  const evPts = s.dates.map((d,i)=> evMap[norm(d)] ? s.close[i] : null);
-  const evColors = s.dates.map(d=> evMap[norm(d)] ? (evMap[norm(d)].pct>0?'#22c55e':'#ef4444') : 'transparent');
+  const n = Math.min(TF[curTF], s.close.length);
+  const dates = s.dates.slice(-n), close = s.close.slice(-n), vol = s.volume.slice(-n), spx = s.spx.slice(-n);
+  const labels = dates.map(fmtMD);
+  // 重新對齊大盤起點到本區間第一天
+  const spx0 = spx[0], px0 = close[0];
+  const spxAligned = spx.map(v => +(v / spx0 * px0).toFixed(2));
+  // 轉換點(落在區間內的)
+  const changeMap = {};
+  (s.regime && s.regime.changes ? s.regime.changes : []).forEach(ch=>{ changeMap[ch.date]=ch; });
+  const cpPts = dates.map((d,i)=> changeMap[d] ? close[i] : null);
+  // 重大波動日
+  const evMap = {}; s.price_events.forEach(e=>{ evMap[e.date]=e; });
+  const evPts = dates.map((d,i)=> evMap[d] ? close[i] : null);
+  const evColors = dates.map(d=> evMap[d] ? (evMap[d].pct>0?'#22c55e':'#ef4444') : 'transparent');
   chart = new Chart(document.getElementById("cv"), {
-    data:{labels:s.dates, datasets:[
-      {type:"line", data:s.close, borderColor:"#60a5fa", borderWidth:2, pointRadius:0, tension:.3, yAxisID:"y", order:1},
-      {type:"line", data:s.spx, borderColor:"#9ca3af", borderWidth:1.2, borderDash:[4,4], pointRadius:0, tension:.3, yAxisID:"y", order:2},
+    data:{labels:labels, datasets:[
+      {type:"line", data:close, borderColor:"#60a5fa", borderWidth:2, pointRadius:0, tension:.25, yAxisID:"y", order:1},
+      {type:"line", data:spxAligned, borderColor:"#9ca3af", borderWidth:1.2, borderDash:[4,4], pointRadius:0, tension:.25, yAxisID:"y", order:2},
+      {type:"line", data:cpPts, showLine:false, pointRadius:7, pointHoverRadius:9, pointStyle:"star",
+       pointBackgroundColor:"#a855f7", pointBorderColor:"#fff", pointBorderWidth:1, yAxisID:"y", order:0},
       {type:"line", data:evPts, showLine:false, pointRadius:5, pointHoverRadius:7, pointStyle:"rectRot",
        pointBackgroundColor:evColors, pointBorderColor:"#fff", pointBorderWidth:1, yAxisID:"y", order:0},
-      {type:"bar", data:s.volume, backgroundColor:"#374f6b", yAxisID:"y1", order:3}
+      {type:"bar", data:vol, backgroundColor:"#374f6b", yAxisID:"y1", order:3}
     ]},
     options:{responsive:true, maintainAspectRatio:false, interaction:{intersect:false,mode:"index"},
       plugins:{legend:{display:false}, tooltip:{callbacks:{label:(c)=>{
-        if(c.datasetIndex===2 && c.raw!==null){const e=evMap[norm(s.dates[c.dataIndex])]; return "📌 "+(e?e.title:"");}
-        if(c.datasetIndex===0) return "股價 US$"+c.raw.toLocaleString();
-        if(c.datasetIndex===1) return "S&P500(等比例) "+c.raw.toLocaleString();
-        if(c.datasetIndex===3) return "成交量 "+(c.raw/1e6).toFixed(1)+"M";
+        const di=c.datasetIndex, d=dates[c.dataIndex];
+        if(di===2 && c.raw!==null){const ch=changeMap[d]; return ch?("★ 轉折: "+ch.fromTerm+" → "+ch.toTerm):"";}
+        if(di===3 && c.raw!==null){const e=evMap[d]; return e?("📌 "+e.title):"";}
+        if(di===0) return "股價 US$"+c.raw.toLocaleString();
+        if(di===1) return "大盤(等比例) "+c.raw.toLocaleString();
+        if(di===4) return "成交量 "+(c.raw/1e6).toFixed(1)+"M";
         return null;}}}},
       scales:{x:{ticks:{color:"#5a6478",maxTicksLimit:6,font:{size:10}},grid:{display:false}},
               y:{position:"right",ticks:{color:"#5a6478",font:{size:10}},grid:{color:"rgba(255,255,255,.05)"}},
-              y1:{display:false,max:(Math.max.apply(null,s.volume))*4}}}});
+              y1:{display:false,max:(Math.max.apply(null,vol))*4}}}});
 }
 
 function renderLearn(){
   const faqs = [
-    ["這個 App 在做什麼?不做什麼?","它描述「現在的趨勢與事實」:趨勢判定、技術指標、基本面、財報日、新聞。它不預測未來、不給買賣建議——因為沒有任何工具能穩定預測股價。看懂現況後,買賣由你自己決定。"],
-    ["上升/下降/盤整怎麼判定?","技術分析標準定義:① 上升趨勢 = 股價站上20日均線、均線多頭排列(20日>60日)、60日均線向上、ADX≥20。② 下降趨勢 = 完全相反。③ 盤整 = ADX<20(趨勢強度不足)或均線糾結。點指標面板的藍字看各術語解釋。"],
-    ["支撐位、壓力位怎麼用?","支撐 = 近60日最低價、壓力 = 近60日最高價。盤整時股價常在兩者之間來回;有效突破壓力(站穩幾天)常代表趨勢轉強,有效跌破支撐則轉弱。許多人以此設定停損點:例如跌破支撐就出場。"],
-    ["趨勢判定會不會錯?","會。技術分析描述的是「目前的結構」,不保證延續——突發新聞、財報意外都可能瞬間改變趨勢。所以 App 同時給你財報倒數與新聞,把「已知的風險時點」先告訴你。"],
-    ["為什麼要看相對大盤強弱?","個股漲 3% 但大盤漲 5%,其實是弱。「強於大盤」的股票有自己的上漲理由;「弱於大盤」即使在漲,也要小心只是被大盤拉著走,大盤一跌它跌更多。"],
-    ["基本面數字怎麼看?","本益比(P/E)代表貴或便宜:相對同業與自己的歷史比較才有意義。EPS/營收年增率代表成長動能:高成長可以支撐高本益比;成長放緩而本益比仍高,就是風險。"],
-    ["重大波動日是什麼?","單日漲跌超過 ±4% 的日子,通常代表有大事(財報、產業消息、大盤恐慌)。圖上的菱形標記就是這些日子,可對照新聞了解原因。"],
-    ["美股顏色為什麼綠漲紅跌?","美國慣例與台灣相反。本 App 採美股慣例:綠=漲、紅=跌。"],
-    ["資料多久更新?","部署在 GitHub 後每個交易日收盤後自動更新(台灣時間早上約 6 點);手機隨時打開都是最新。資料來源 Yahoo Finance,非即時報價。"],
-    ["新手建議?","① 先觀察幾週,熟悉趨勢判定與指標 ② 只投入虧光也不影響生活的錢 ③ 留意財報日,新手可避開財報前後進出 ④ 分散投資,別把錢押在一檔。"]
+    ["這個 App 在做什麼?不做什麼?","它描述「現在的趨勢與事實」:趨勢判定、轉換點、訊號彙整、技術指標、基本面、財報日、新聞。它不預測未來、不給買賣建議——因為沒有任何工具能穩定預測股價。看懂現況後,買賣由你自己決定。"],
+    ["上升/下降/盤整怎麼判定?","技術分析標準定義:① 上升趨勢 = 股價站上20日均線、均線多頭排列(20日>60日)、60日均線向上、ADX≥20。② 下降趨勢 = 完全相反。③ 盤整 = ADX<20(趨勢強度不足)或均線糾結。"],
+    ["轉換點能即時抓到嗎?","不能。轉換點(例:盤整→上升)只能事後幾天確認,因為要等均線、ADX 累積出新趨勢的證據。圖上的紫色★是已確認的歷史轉換點。當趨勢卡片出現黃色『觀察中』提示,代表可能正在轉換但尚未確認——這是預警,不是保證。"],
+    ["訊號彙整怎麼用?","把 7 個指標的方向加總成『X 偏多、Y 偏空、Z 中性』。數字越懸殊=共識越一致、訊號越清楚;接近時=多空拉鋸、方向不明,通常觀望較好。它幫你判斷『訊號清不清楚』,不是叫你買賣。"],
+    ["怎麼用這個 App 輔助下單?","三個原則:① 順勢不逆勢——趨勢確認上升再買,比盤整瞎猜安全。② 用趨勢決定方向、用支撐/壓力決定價位——上升趨勢中股價回到支撐附近是相對好的買點。③ 看訊號共識與維持天數——共識一致且趨勢還新時,風險報酬較好。"],
+    ["多時間維度圖怎麼看?","同一檔股票在不同時間尺度趨勢可能相反(短期回檔、長期上升)。切換 5天~5年 能看清『現在是大趨勢中的小波動,還是趨勢真的反轉』。"],
+    ["大盤 S&P 500 是什麼?","美國 500 家最大公司的綜合指數,代表整體美股。圖中灰色虛線即大盤(已等比例對齊),個股在它之上=強於大盤(真強),之下=被大盤拉著走(弱)。"],
+    ["支撐位、壓力位怎麼用?","支撐 = 近60日最低價、壓力 = 近60日最高價。盤整時股價常在兩者間來回;有效突破壓力常代表轉強,有效跌破支撐則轉弱,許多人以此設停損點。"],
+    ["基本面數字怎麼看?","本益比代表貴或便宜(和同業、自己歷史比);EPS/營收年增率代表成長動能。高成長可支撐高本益比;成長放緩而本益比仍高就是風險。"],
+    ["資料多久更新?","週二~六台灣早上 6 點(美股收盤後)雲端自動更新,手機打開即最新。資料來源 Yahoo Finance,非即時報價。"],
+    ["新手建議?","① 先觀察幾週,熟悉趨勢與訊號 ② 只投入虧光也不影響生活的錢 ③ 留意財報日,新手可避開財報前後進出 ④ 分散投資,別把錢押在一檔。"]
   ];
   screen.innerHTML = `<p class="hint">點擊展開,每篇 30 秒讀完。</p>` +
     faqs.map(f=>`<div class="card faq" onclick="this.classList.toggle('open')"><b>▸ ${f[0]}</b><p>${f[1]}</p></div>`).join("");
