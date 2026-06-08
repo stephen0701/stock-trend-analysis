@@ -1,5 +1,5 @@
 {
-  "updated": "2026-06-07 14:11",
+  "updated": "2026-06-07 14:26",
   "stocks": {
     "NVDA": {
       "price_events": [
@@ -96,6 +96,51 @@
           "publisher": "Yahoo Finance"
         },
         {
+          "title": "If You Hold This 20 Year Treasury ETF You Are Losing Money Even With Yields Up",
+          "sent": "neu",
+          "sentLabel": "中性",
+          "reason": "一般報導,無明顯多空訊息",
+          "date": "2026-06-07",
+          "url": "https://247wallst.com/investing/2026/06/07/if-you-hold-this-20-year-treasury-etf-you-are-losing-money-even-with-yields-up/",
+          "publisher": "24/7 Wall St."
+        },
+        {
+          "title": "PBDC Holders Face a Hard Question About Sustainability",
+          "sent": "neu",
+          "sentLabel": "中性",
+          "reason": "一般報導,無明顯多空訊息",
+          "date": "2026-06-07",
+          "url": "https://247wallst.com/investing/2026/06/07/pbdc-holders-face-a-hard-question-about-sustainability/",
+          "publisher": "24/7 Wall St."
+        },
+        {
+          "title": "Got $10,000? Meta vs Nvidia: The Better Opportunity Right Now",
+          "sent": "pos",
+          "sentLabel": "偏正面",
+          "reason": "股價強勢上攻",
+          "date": "2026-06-07",
+          "url": "https://247wallst.com/investing/2026/06/07/got-10000-meta-vs-nvidia-the-better-opportunity-right-now/",
+          "publisher": "24/7 Wall St."
+        },
+        {
+          "title": "If You Had Invested $10,000 in This Top Warren Buffett Stock 10 Years Ago, Here's How Much You'd Have Today",
+          "sent": "neu",
+          "sentLabel": "中性",
+          "reason": "一般報導,無明顯多空訊息",
+          "date": "2026-06-07",
+          "url": "https://www.fool.com/investing/2026/06/07/invest-10000-top-warren-buffett-stock-how-much/",
+          "publisher": "Motley Fool"
+        },
+        {
+          "title": "Jensen Huang’s Next Announcement Could Trigger an AI Market Panic. Here’s the Supply Shock Wall Street Isn’t Pricing In",
+          "sent": "neu",
+          "sentLabel": "中性",
+          "reason": "一般報導,無明顯多空訊息",
+          "date": "2026-06-07",
+          "url": "https://247wallst.com/investing/2026/06/07/jensen-huangs-next-announcement-could-trigger-an-ai-market-panic-heres-the-supply-shock-wall-street-isnt-pricing-in/",
+          "publisher": "24/7 Wall St."
+        },
+        {
           "title": "Here Are 5 AI-Related Stocks to Buy and Hold for the Next 5 Years",
           "sent": "neu",
           "sentLabel": "中性",
@@ -103,51 +148,6 @@
           "date": "2026-06-07",
           "url": "https://www.fool.com/investing/2026/06/07/here-are-5-ai-related-stocks-to-buy-and-hold-for/",
           "publisher": "Motley Fool"
-        },
-        {
-          "title": "1 Unstoppable Stock to Buy Before It Joins Broadcom in the $1 Trillion Club",
-          "sent": "neu",
-          "sentLabel": "中性",
-          "reason": "一般報導,無明顯多空訊息",
-          "date": "2026-06-07",
-          "url": "https://www.fool.com/investing/2026/06/07/1-unstoppable-stock-to-buy-before-it-joins-broadco/",
-          "publisher": "Motley Fool"
-        },
-        {
-          "title": "The IPO Market Is Heating Up Again. These Financial Stocks Stand to Win.",
-          "sent": "neu",
-          "sentLabel": "中性",
-          "reason": "一般報導,無明顯多空訊息",
-          "date": "2026-06-07",
-          "url": "https://www.fool.com/investing/2026/06/07/the-ipo-market-is-heating-up-again-these-financial/",
-          "publisher": "Motley Fool"
-        },
-        {
-          "title": "Mizuho Strategist: Healthcare Is Now a Value Sector as Pharma Stocks Underperform Tech",
-          "sent": "neu",
-          "sentLabel": "中性",
-          "reason": "一般報導,無明顯多空訊息",
-          "date": "2026-06-07",
-          "url": "https://247wallst.com/investing/2026/06/07/mizuho-strategist-healthcare-is-now-a-value-sector-as-pharma-stocks-underperform-tech/",
-          "publisher": "24/7 Wall St."
-        },
-        {
-          "title": "Yikes! The AI Data Center Build-Out Is Cannibalizing a $1 Trillion Catalyst That's Powered the Trump Bull Market Higher.",
-          "sent": "neu",
-          "sentLabel": "中性",
-          "reason": "一般報導,無明顯多空訊息",
-          "date": "2026-06-07",
-          "url": "https://www.fool.com/investing/2026/06/07/yikes-ai-build-out-1-trillion-trump-bull-market/",
-          "publisher": "Motley Fool"
-        },
-        {
-          "title": "The Unstoppable Space ETF Rally Means UFO’s 138% Surge Still Has Room to Run",
-          "sent": "pos",
-          "sentLabel": "偏正面",
-          "reason": "股價強勢上攻",
-          "date": "2026-06-07",
-          "url": "https://247wallst.com/investing/2026/06/07/the-unstoppable-space-etf-rally-means-ufos-138-surge-still-has-room-to-run/",
-          "publisher": "24/7 Wall St."
         }
       ]
     },
@@ -228,6 +228,15 @@
       ],
       "news": [
         {
+          "title": "Dow Jones Futures Due Amid Market Rally's First Real Test; SpaceX IPO, Apple, Oracle Ahead",
+          "sent": "neu",
+          "sentLabel": "中性",
+          "reason": "一般報導,無明顯多空訊息",
+          "date": "2026-06-07",
+          "url": "https://www.investors.com/market-trend/stock-market-today/dow-jones-futures-what-to-do-market-rally-test-spacex-ipo-apple-oracle/?src=A00220&yptr=yahoo",
+          "publisher": "Investor's Business Daily"
+        },
+        {
           "title": "Here Are 5 AI-Related Stocks to Buy and Hold for the Next 5 Years",
           "sent": "neu",
           "sentLabel": "中性",
@@ -262,15 +271,6 @@
           "date": "2026-06-07",
           "url": "https://www.wsj.com/tech/ai/googles-unique-approach-to-getting-data-centers-built-2cfae652?siteid=yhoof2&yptr=yahoo",
           "publisher": "The Wall Street Journal"
-        },
-        {
-          "title": "Dow Jones Futures Due Amid Market Rally's First Real Test; SpaceX IPO, Apple, Oracle Ahead",
-          "sent": "neu",
-          "sentLabel": "中性",
-          "reason": "一般報導,無明顯多空訊息",
-          "date": "2026-06-07",
-          "url": "https://www.investors.com/market-trend/stock-market-today/dow-jones-futures-what-to-do-market-rally-test-spacex-ipo-apple-oracle/?src=A00220&yptr=yahoo",
-          "publisher": "Investor's Business Daily"
         },
         {
           "title": "AIQ Turned $10,000 Into $13,400 in Six Months as AI Chips Soared 34% YTD",
@@ -378,15 +378,6 @@
       ],
       "news": [
         {
-          "title": "80% of Wegovy Pill Users Never Took a Weight Loss Drug Before. Does This Number Change the Entire Novo Nordisk Bear Case?",
-          "sent": "neu",
-          "sentLabel": "中性",
-          "reason": "一般報導,無明顯多空訊息",
-          "date": "2026-06-07",
-          "url": "https://www.fool.com/investing/2026/06/07/80-of-wegovy-pill-users-never-took-a-weight-loss/",
-          "publisher": "Motley Fool"
-        },
-        {
           "title": "Dow Jones Futures Due Amid Market Rally's First Real Test; SpaceX IPO, Apple, Oracle Ahead",
           "sent": "neu",
           "sentLabel": "中性",
@@ -394,6 +385,15 @@
           "date": "2026-06-07",
           "url": "https://www.investors.com/market-trend/stock-market-today/dow-jones-futures-what-to-do-market-rally-test-spacex-ipo-apple-oracle/?src=A00220&yptr=yahoo",
           "publisher": "Investor's Business Daily"
+        },
+        {
+          "title": "80% of Wegovy Pill Users Never Took a Weight Loss Drug Before. Does This Number Change the Entire Novo Nordisk Bear Case?",
+          "sent": "neu",
+          "sentLabel": "中性",
+          "reason": "一般報導,無明顯多空訊息",
+          "date": "2026-06-07",
+          "url": "https://www.fool.com/investing/2026/06/07/80-of-wegovy-pill-users-never-took-a-weight-loss/",
+          "publisher": "Motley Fool"
         },
         {
           "title": "Your Weight-Loss Drugs Are Next on the Corporate Chopping Block",
