@@ -68,6 +68,33 @@ def trend_series(df):
 
 TERM = {"up": "上升趨勢", "down": "下降趨勢", "range": "盤整(區間震盪)"}
 
+# 六種轉折點的說明(技術派解讀 + 偏向 + 風險提醒)
+TRANSITION = {
+    ("range", "up"): {"icon": "📈", "tag": "偏多訊號",
+        "text": "由盤整轉為上升:股價結束橫盤、站上均線。技術派視為偏多,順勢者常在此階段留意進場。但轉折確認有延遲,現價未必是低點;也可能是假突破,幾天後跌回盤整。"},
+    ("up", "range"): {"icon": "⏸", "tag": "漲勢暫歇",
+        "text": "由上升轉為盤整:上漲動能減弱、開始橫盤。技術派視為漲勢暫歇,持有者可考慮部分獲利了結或設好停利。注意:可能只是中途休息,不一定是反轉。"},
+    ("up", "down"): {"icon": "📉", "tag": "賣出/避險訊號",
+        "text": "由上升轉為下降:跌破均線、空頭排列成形。技術派視為趨勢反轉向下,是減碼或出場的重要警訊,尤其用來保護既有獲利。偶爾為急跌後假摔隨即反彈。"},
+    ("down", "range"): {"icon": "⏸", "tag": "跌勢止穩",
+        "text": "由下降轉為盤整:跌勢停止、開始橫盤,可能在打底。技術派視為跌勢暫歇但尚未轉多,通常觀望等方向。注意:盤整後可能再續跌,不代表落底。"},
+    ("down", "up"): {"icon": "📈", "tag": "反轉偏多訊號",
+        "text": "由下降轉為上升:趨勢反轉向上。技術派視為強烈偏多訊號。但這種 V 轉相對少見且容易失敗,假訊號比例高,建議等站穩幾天再確認。"},
+    ("range", "down"): {"icon": "📉", "tag": "轉弱訊號",
+        "text": "由盤整轉為下降:橫盤後跌破支撐、空頭成形。技術派視為偏空,提醒避免進場或考慮減碼。同樣可能為假跌破,隨後拉回盤整。"},
+}
+
+
+def transition_detail(last_change):
+    if not last_change:
+        return None
+    key = (last_change["from"], last_change["to"])
+    info = TRANSITION.get(key)
+    if not info:
+        return None
+    return {"icon": info["icon"], "tag": info["tag"], "text": info["text"],
+            "date": last_change["date"]}
+
 
 def regime_info(df):
     """轉換點三層: 歷史轉換點 / 目前狀態維持天數+轉換日 / 確認中提示"""
@@ -113,6 +140,7 @@ def regime_info(df):
         "heldDays": held_days,
         "heldBars": held_bars,
         "lastChange": last_change,
+        "transitionDetail": transition_detail(last_change),
         "changes": changes[-30:],   # 近 30 次轉換,給圖標記用
         "pending": pending,
     }
@@ -196,6 +224,18 @@ def technicals(df, spx):
     else:
         verdict = "多空訊號拉鋸、方向不明朗,觀望為宜,等待趨勢明確再行動。"
     signals = {"bull": bull, "bear": bear, "neutral": neu, "verdict": verdict}
+
+    # 兩步驟操作法: 趨勢 + 訊號共識
+    if trend == "up" and bull >= bear + 2:
+        action = {"level": "buy", "label": "留意買進",
+                  "text": "趨勢為上升,且訊號多數偏多——兩個條件同向。順勢者可留意進場,但別追高,建議等股價回到支撐位附近再分批進,並設好停損(跌破支撐就出場)。"}
+    elif trend == "down" and bear >= bull + 2:
+        action = {"level": "sell", "label": "留意減碼",
+                  "text": "趨勢為下降,且訊號多數偏空——兩個條件同向。持有者宜留意風險、考慮減碼或出場,以保護資金。"}
+    else:
+        action = {"level": "wait", "label": "觀望為宜",
+                  "text": "趨勢與訊號共識未同向(或處於盤整),方向不明朗。此時最好按兵不動,等兩個條件一致再行動——多數虧損都來自在不該動時硬要動。"}
+    signals["action"] = action
 
     return {"trend": trend, "trendTerm": term, "trendDesc": desc, "indicators": inds,
             "signals": signals,

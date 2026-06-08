@@ -65,6 +65,22 @@
   .trend-card p{color:#c5cddb;font-size:12.5px;line-height:1.8;margin-top:6px;}
   .held{font-size:11px;color:var(--muted);margin-top:6px;}
   .pending{margin-top:8px;padding:8px 10px;border-radius:8px;background:rgba(234,179,8,.12);border:1px solid rgba(234,179,8,.4);color:#f4d35e;font-size:12px;line-height:1.6;}
+  .transition{margin-top:8px;padding:8px 10px;border-radius:8px;background:rgba(99,102,241,.12);border:1px solid rgba(99,102,241,.35);}
+  .transition b{font-size:12px;color:#c7d2fe;display:block;margin-bottom:3px;}
+  .transition p{font-size:11.5px;color:#aeb8d4;line-height:1.6;margin:0;}
+  .action{border-radius:16px;padding:14px;margin-bottom:12px;border:1px solid #2a3245;}
+  .action-buy{background:linear-gradient(135deg,#0e2a1a,#1a2233);border-color:rgba(34,197,94,.5);}
+  .action-sell{background:linear-gradient(135deg,#2a0e0e,#1a2233);border-color:rgba(239,68,68,.5);}
+  .action-wait{background:linear-gradient(135deg,#222c42,#1a2233);}
+  .action .ah{font-size:15px;color:var(--text);margin-bottom:6px;}
+  .action .ah b{font-size:16px;}
+  .action-buy .ah b{color:var(--green);} .action-sell .ah b{color:var(--red);} .action-wait .ah b{color:var(--yellow);}
+  .action p{font-size:12.5px;color:#c5cddb;line-height:1.7;margin-bottom:10px;}
+  .action .steps{display:flex;gap:8px;margin-bottom:8px;}
+  .action .step{flex:1;background:var(--card2);border-radius:10px;padding:8px 10px;}
+  .action .step span{font-size:10px;color:var(--muted);display:block;}
+  .action .step b{font-size:14px;color:var(--text);}
+  .action .anote{font-size:11px;color:var(--muted);line-height:1.6;}
   .sigbar{display:flex;gap:8px;margin-bottom:8px;}
   .sigbar .box{flex:1;border-radius:12px;padding:10px;text-align:center;background:var(--card2);}
   .sigbar .box b{font-size:20px;display:block;}
@@ -102,7 +118,7 @@
 <body>
   <header class="appbar"><h1>📊 股市小幫手</h1><span class="upd" id="upd"></span></header>
   <div class="screen" id="screen"></div>
-  <div class="disclaimer">⚠️ 本工具描述現況、不預測漲跌、不構成投資建議。買賣決定請自行判斷。</div>
+  <div class="disclaimer">⚠️ 本工具描述現況、不預測漲跌、不構成投資建議。買賣決定請自行判斷。<br>© 2026 王星皓 (stephen0701)・MIT License</div>
   <nav>
     <button data-tab="watch" class="active"><span class="ico">⭐</span>自選股</button>
     <button data-tab="learn"><span class="ico">📚</span>學習</button>
@@ -131,6 +147,7 @@ const GLOSSARY = {
   "壓力位":"近 60 個交易日的最高價附近。漲到這裡常遇到獲利了結賣壓,若有效突破(站穩),常代表趨勢延續或加速。",
   "訊號彙整":"把 7 個技術指標各自的方向(偏多/偏空/中性)加總。偏多 = 該指標代表往上的力量較強、偏空 = 往下、中性 = 無方向。多空數字越懸殊代表共識越一致、訊號越清楚;接近時代表多空拉鋸、方向不明。",
   "轉換點":"趨勢從一種狀態變成另一種(例如盤整→上升)的那一天。注意:轉換點只能事後幾天才能確認,無法當天即時判斷,因為要等均線、ADX 等指標累積出新趨勢的證據。",
+  "兩步驟操作法":"簡化的決策法,只看兩件事:① 趨勢卡片(上升/下降/盤整)② 訊號共識(偏多/偏空數字)。規則:上升+偏多明顯多 → 留意買進(別追高,回支撐再分批進、設停損);下降+偏空明顯多 → 留意減碼;兩者不同向或盤整 → 觀望。為什麼要兩個一起看?因為轉折點會被盤整盤的假訊號頻繁欺騙,加上訊號共識當第二道確認,能過濾掉大部分假訊號。這是輔助判斷,不是保證獲利的買賣指令。",
   "大盤(S&P 500)":"美國 500 家最大公司的綜合指數,代表整體美股行情。圖中灰色虛線為大盤(已等比例對齊),個股線在它之上=強於大盤,之下=弱於大盤。",
   "市值":"股價 × 流通股數 = 整間公司的總價格。市值越大通常越穩定、波動較小;兆美元等級就是全球最大的一批公司。",
   "本益比(近四季)":"股價 ÷ 過去四季每股盈餘(EPS)。代表「用幾年的獲利才能買回股價」,是衡量貴或便宜最常用的指標。和同產業、和自己的歷史比較才有意義;高成長公司通常本益比較高。",
@@ -149,7 +166,7 @@ document.getElementById("upd").textContent = "資料更新: " + D.updated;
 const screen = document.getElementById("screen");
 let chart = null;
 
-function fmtMD(d){ const p=d.split("-"); return p[1]+"/"+p[2]; }
+function fmtMD(d){ if(d.indexOf("-")>=0){const p=d.split("-"); return p[1]+"/"+p[2];} return d; }
 
 function renderWatch(){
   screen.innerHTML = `<p class="hint">點任一檔看完整分析。圖示 = 目前趨勢判定:📈 上升 📉 下降 ↔️ 盤整(每日更新;美股慣例綠漲紅跌)</p>` +
@@ -176,7 +193,12 @@ function renderDetail(key){
     ? `<div class="held">⏱ 此趨勢自 <b>${r.sinceDate}</b> 起,已維持 <b>${r.heldBars}</b> 個交易日${r.lastChange?`(由「${r.lastChange.fromTerm}」轉入)`:""}。<span class="k" style="color:var(--blue);cursor:pointer" onclick="showGloss('轉換點')">什麼是轉換點?</span></div>`
     : "";
   const pendingTxt = r.pending ? `<div class="pending">⚠️ ${r.pending.text}</div>` : "";
+  const td = r.transitionDetail;
+  const transitionTxt = td
+    ? `<div class="transition"><b>${td.icon} 最近一次轉折(${td.date})・${td.tag}</b><p>${td.text}</p></div>`
+    : "";
   const sg = s.signals || {bull:0,bear:0,neutral:0,verdict:""};
+  const act = sg.action || {level:"wait",label:"觀望為宜",text:""};
   screen.innerHTML = `
     <button class="back" onclick="renderWatch()">‹ 返回自選股</button>
     <div class="det-head">
@@ -187,7 +209,17 @@ function renderDetail(key){
       <span class="term">${trendIcon[s.trend]} ${s.trendTerm}</span><span class="badge">技術分析判定・每日更新</span>
       <p>${s.trendDesc}</p>
       ${heldTxt}
+      ${transitionTxt}
       ${pendingTxt}
+    </div>
+    <div class="action action-${act.level}">
+      <div class="ah">🧭 兩步驟操作法 → <b>${act.label}</b></div>
+      <p>${act.text}</p>
+      <div class="steps">
+        <div class="step"><span>① 趨勢</span><b style="color:${trendColor[s.trend]}">${s.trendTerm}</b></div>
+        <div class="step"><span>② 訊號共識</span><b>偏多 ${sg.bull} / 偏空 ${sg.bear}</b></div>
+      </div>
+      <div class="anote">看這兩個就好:兩個同向(上升+偏多 / 下降+偏空)才行動,否則觀望。點<span class="k" style="cursor:pointer" onclick="showGloss('兩步驟操作法')">這裡</span>看完整說明。</div>
     </div>
     ${earnTxt}
     <div class="card"><h3>訊號彙整(7 個指標的多空共識,點<span class="k" style="cursor:pointer" onclick="showGloss('訊號彙整')">說明</span>)</h3>
