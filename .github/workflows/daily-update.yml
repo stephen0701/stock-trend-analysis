@@ -9,7 +9,7 @@ on:
   workflow_dispatch: {}   # 也可在 GitHub 網頁上手動觸發
 
 permissions:
-  contents: write
+  contents: read
   pages: write
   id-token: write
 
@@ -29,13 +29,7 @@ jobs:
       - name: Run daily pipeline
         run: python run_daily.py
 
-      - name: Commit updated data
-        run: |
-          git config user.name "auto-update-bot"
-          git config user.email "actions@github.com"
-          git add data app/data.js
-          git diff --cached --quiet || git commit -m "daily data update $(date -u +%F)"
-          git push
+      # 不再 commit 回 repo:資料每次部署時即時重產,避免與手動上傳衝突
 
       - name: Upload app for Pages
         uses: actions/upload-pages-artifact@v3
