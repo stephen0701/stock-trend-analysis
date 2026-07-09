@@ -33,6 +33,24 @@
   .up{color:var(--green)!important;}.down{color:var(--red)!important;}
   .pct{font-size:12px;}
   .earn-chip{font-size:10px;color:#f59e0b;display:block;margin-top:2px;}
+  .hilo{font-size:10px;color:var(--muted);display:block;margin-top:2px;}
+  .holding .hform{display:flex;flex-direction:column;gap:8px;}
+  .holding label{font-size:12px;color:var(--muted);display:flex;justify-content:space-between;align-items:center;gap:8px;}
+  .holding input{background:var(--card2);border:1px solid #2a3245;border-radius:8px;color:var(--text);padding:8px;font-size:14px;width:140px;}
+  .holding button{margin-top:4px;padding:9px;border:none;border-radius:10px;background:var(--accent);color:#fff;font-size:14px;cursor:pointer;}
+  .holding button.ghost{background:var(--card2);color:var(--muted);}
+  .holding .hrow{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #2a3245;font-size:13px;}
+  .holding .hrow:last-of-type{border-bottom:none;}
+  .holding .hrow span{color:var(--muted);}
+  .holding .hrow b{color:var(--text);}
+  .holding .hrow.big b{font-size:17px;}
+  .holding .hbtns{display:flex;gap:8px;margin-top:10px;}
+  .holding .hbtns button{flex:1;margin-top:0;}
+  .holding select{background:var(--card2);border:1px solid #2a3245;border-radius:8px;color:var(--text);padding:8px;font-size:14px;width:180px;}
+  .holding.total{border:1px solid var(--accent);}
+  .holding .plots{margin-top:8px;border-top:1px dashed #2a3245;padding-top:6px;}
+  .holding .lot{display:flex;justify-content:space-between;align-items:center;font-size:11.5px;color:var(--muted);padding:4px 0;}
+  .holding .lot button{margin:0;padding:3px 10px;font-size:11px;background:var(--card2);color:var(--red);border-radius:6px;}
   .hint{font-size:11px;color:var(--muted);margin:4px 2px 10px;line-height:1.6;}
   .back{background:none;border:none;color:var(--accent);font-size:14px;cursor:pointer;margin-bottom:8px;}
   .det-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;}
@@ -121,6 +139,7 @@
   <div class="disclaimer">⚠️ 本工具描述現況、不預測漲跌、不構成投資建議。買賣決定請自行判斷。<br>© 2026 王星皓 (stephen0701)・MIT License</div>
   <nav>
     <button data-tab="watch" class="active"><span class="ico">⭐</span>自選股</button>
+    <button data-tab="portfolio"><span class="ico">💼</span>持股</button>
     <button data-tab="learn"><span class="ico">📚</span>學習</button>
   </nav>
   <div class="modal-bg" id="modalBg" onclick="this.classList.remove('show')">
@@ -168,6 +187,69 @@ let chart = null;
 
 function fmtMD(d){ if(d.indexOf("-")>=0){const p=d.split("-"); return p[1]+"/"+p[2];} return d; }
 
+/* ---- 我的持股(可記多筆,只存本機 localStorage,不上傳) ---- */
+function getPortfolio(){ try{ return JSON.parse(localStorage.getItem("portfolio")) || []; }catch(e){ return []; } }
+function savePortfolio(arr){ localStorage.setItem("portfolio", JSON.stringify(arr)); }
+function addLot(){
+  const t = document.getElementById("p-ticker").value;
+  const shares = parseFloat(document.getElementById("p-shares").value);
+  const price = parseFloat(document.getElementById("p-price").value);
+  const date = document.getElementById("p-date").value;
+  if(!t || !(shares>0) || !(price>0)){ alert("請填股票、股數、購買價(股數與價格需大於 0)"); return; }
+  const arr = getPortfolio(); arr.push({ticker:t, shares:shares, price:price, date:date||""});
+  savePortfolio(arr); renderPortfolio();
+}
+function delLot(i){ if(confirm("刪除這一筆?")){ const arr=getPortfolio(); arr.splice(i,1); savePortfolio(arr); renderPortfolio(); } }
+
+function renderPortfolio(){
+  const arr = getPortfolio();
+  const cur = t => (D.stocks[t] ? D.stocks[t].close[D.stocks[t].close.length-1] : null);
+  const n0 = v => v.toLocaleString(undefined,{maximumFractionDigits:0});
+  const opts = Object.keys(D.stocks).map(k=>`<option value="${k}">${k}・${D.stocks[k].name}</option>`).join("");
+  let html = `<div class="card holding"><h3>➕ 新增持股(只存在你的裝置,不會上傳)</h3>
+    <div class="hform">
+      <label>股票 <select id="p-ticker">${opts}</select></label>
+      <label>股數 <input id="p-shares" type="number" step="any" placeholder="例 100"></label>
+      <label>購買價 US$ <input id="p-price" type="number" step="any" placeholder="例 180"></label>
+      <label>購買時間 <input id="p-date" type="date"></label>
+      <button onclick="addLot()">新增一筆</button>
+    </div></div>`;
+  if(arr.length===0){
+    html += `<p class="hint">目前沒有持股紀錄,上面新增第一筆吧。同一檔可分多次買進,系統會自動算平均成本。</p>`;
+    screen.innerHTML = html; return;
+  }
+  const byT = {};
+  arr.forEach(l => { (byT[l.ticker] = byT[l.ticker] || []).push(l); });
+  let totCost = 0, totMv = 0, cards = "";
+  Object.keys(byT).forEach(t => {
+    const lots = byT[t];
+    const sh = lots.reduce((a,l)=>a+l.shares, 0);
+    const cost = lots.reduce((a,l)=>a+l.shares*l.price, 0);
+    const avg = cost/sh;
+    const price = cur(t);
+    const mv = price!=null ? sh*price : 0;
+    const pl = mv-cost, plp = cost ? pl/cost*100 : 0;
+    totCost += cost; totMv += mv;
+    const cls = pl>=0 ? "up" : "down", sign = pl>=0 ? "+" : "-";
+    const name = D.stocks[t] ? D.stocks[t].name : t;
+    cards += `<div class="card holding"><h3>${t}・${name}</h3>
+      <div class="hrow"><span>平均成本價</span><b>US$${avg.toLocaleString(undefined,{maximumFractionDigits:2})}</b></div>
+      <div class="hrow"><span>持有股數</span><b>${sh.toLocaleString()}</b></div>
+      <div class="hrow"><span>目前股價</span><b>US$${price!=null?price.toLocaleString():"—"}</b></div>
+      <div class="hrow"><span>總成本 → 市值</span><b>US$${n0(cost)} → US$${n0(mv)}</b></div>
+      <div class="hrow big"><span>損益</span><b class="${cls}">${sign}US$${n0(Math.abs(pl))}(${sign}${Math.abs(plp).toFixed(1)}%)</b></div>
+      <div class="plots">${lots.map(l=>{const gi=arr.indexOf(l); return `<div class="lot"><span>${l.date||"(無日期)"}・${l.shares} 股 @ US$${l.price}</span><button onclick="delLot(${gi})">刪</button></div>`;}).join("")}</div>
+    </div>`;
+  });
+  const tpl = totMv-totCost, tplp = totCost ? tpl/totCost*100 : 0;
+  const tcls = tpl>=0 ? "up" : "down", tsign = tpl>=0 ? "+" : "-";
+  html += `<div class="card holding total"><h3>📊 全部持股總覽</h3>
+    <div class="hrow"><span>總成本 → 總市值</span><b>US$${n0(totCost)} → US$${n0(totMv)}</b></div>
+    <div class="hrow big"><span>總損益</span><b class="${tcls}">${tsign}US$${n0(Math.abs(tpl))}(${tsign}${Math.abs(tplp).toFixed(1)}%)</b></div>
+  </div>` + cards;
+  screen.innerHTML = html;
+}
+
 function renderWatch(){
   screen.innerHTML = `<p class="hint">點任一檔看完整分析。圖示 = 目前趨勢判定:📈 上升 📉 下降 ↔️ 盤整(每日更新;美股慣例綠漲紅跌)</p>` +
   Object.entries(D.stocks).map(([k,s])=>{
@@ -177,7 +259,7 @@ function renderWatch(){
     return `<div class="stock-row" onclick="renderDetail('${k}')">
       <div class="t-ico">${trendIcon[s.trend]}</div>
       <div class="name"><b>${s.name}</b><span style="color:${trendColor[s.trend]}">${s.trendTerm}</span>${earn}</div>
-      <div class="px"><b>US$${last.toLocaleString()}</b><span class="pct ${cls}">${sign}${chg}%</span></div>
+      <div class="px"><b>US$${last.toLocaleString()}</b><span class="pct ${cls}">${sign}${chg}%</span>${(s.dayHigh!=null&&s.dayLow!=null)?`<span class="hilo">高 ${s.dayHigh.toLocaleString()} / 低 ${s.dayLow.toLocaleString()}</span>`:""}</div>
     </div>`;
   }).join("");
 }
@@ -279,14 +361,11 @@ function drawChart(s){
   const n = Math.min(TF[curTF], s.close.length);
   const dates = s.dates.slice(-n), close = s.close.slice(-n), vol = s.volume.slice(-n), spx = s.spx.slice(-n);
   const labels = dates.map(fmtMD);
-  // 重新對齊大盤起點到本區間第一天
   const spx0 = spx[0], px0 = close[0];
   const spxAligned = spx.map(v => +(v / spx0 * px0).toFixed(2));
-  // 轉換點(落在區間內的)
   const changeMap = {};
   (s.regime && s.regime.changes ? s.regime.changes : []).forEach(ch=>{ changeMap[ch.date]=ch; });
   const cpPts = dates.map((d,i)=> changeMap[d] ? close[i] : null);
-  // 重大波動日
   const evMap = {}; s.price_events.forEach(e=>{ evMap[e.date]=e; });
   const evPts = dates.map((d,i)=> evMap[d] ? close[i] : null);
   const evColors = dates.map(d=> evMap[d] ? (evMap[d].pct>0?'#22c55e':'#ef4444') : 'transparent');
@@ -303,11 +382,11 @@ function drawChart(s){
     options:{responsive:true, maintainAspectRatio:false, interaction:{intersect:false,mode:"index"},
       plugins:{legend:{display:false}, tooltip:{callbacks:{label:(c)=>{
         const di=c.datasetIndex, d=dates[c.dataIndex];
-        if(di===2 && c.raw!==null){const ch=changeMap[d]; return ch?("★ 轉折: "+ch.fromTerm+" → "+ch.toTerm):"";}
-        if(di===3 && c.raw!==null){const e=evMap[d]; return e?("📌 "+e.title):"";}
-        if(di===0) return "股價 US$"+c.raw.toLocaleString();
-        if(di===1) return "大盤(等比例) "+c.raw.toLocaleString();
-        if(di===4) return "成交量 "+(c.raw/1e6).toFixed(1)+"M";
+        if(di===2 && c.raw!==null){const ch=changeMap[d]; return ch?("\u2605 \u8f49\u6298: "+ch.fromTerm+" \u2192 "+ch.toTerm):"";}
+        if(di===3 && c.raw!==null){const e=evMap[d]; return e?("\ud83d\udccc "+e.title):"";}
+        if(di===0) return "\u80a1\u50f9 US$"+c.raw.toLocaleString();
+        if(di===1) return "\u5927\u76e4(\u7b49\u6bd4\u4f8b) "+c.raw.toLocaleString();
+        if(di===4) return "\u6210\u4ea4\u91cf "+(c.raw/1e6).toFixed(1)+"M";
         return null;}}}},
       scales:{x:{ticks:{color:"#5a6478",maxTicksLimit:6,font:{size:10}},grid:{display:false}},
               y:{position:"right",ticks:{color:"#5a6478",font:{size:10}},grid:{color:"rgba(255,255,255,.05)"}},
@@ -316,26 +395,23 @@ function drawChart(s){
 
 function renderLearn(){
   const faqs = [
-    ["這個 App 在做什麼?不做什麼?","它描述「現在的趨勢與事實」:趨勢判定、轉換點、訊號彙整、技術指標、基本面、財報日、新聞。它不預測未來、不給買賣建議——因為沒有任何工具能穩定預測股價。看懂現況後,買賣由你自己決定。"],
-    ["上升/下降/盤整怎麼判定?","技術分析標準定義:① 上升趨勢 = 股價站上20日均線、均線多頭排列(20日>60日)、60日均線向上、ADX≥20。② 下降趨勢 = 完全相反。③ 盤整 = ADX<20(趨勢強度不足)或均線糾結。"],
-    ["轉換點能即時抓到嗎?","不能。轉換點(例:盤整→上升)只能事後幾天確認,因為要等均線、ADX 累積出新趨勢的證據。圖上的紫色★是已確認的歷史轉換點。當趨勢卡片出現黃色『觀察中』提示,代表可能正在轉換但尚未確認——這是預警,不是保證。"],
-    ["訊號彙整怎麼用?","把 7 個指標的方向加總成『X 偏多、Y 偏空、Z 中性』。數字越懸殊=共識越一致、訊號越清楚;接近時=多空拉鋸、方向不明,通常觀望較好。它幫你判斷『訊號清不清楚』,不是叫你買賣。"],
-    ["怎麼用這個 App 輔助下單?","三個原則:① 順勢不逆勢——趨勢確認上升再買,比盤整瞎猜安全。② 用趨勢決定方向、用支撐/壓力決定價位——上升趨勢中股價回到支撐附近是相對好的買點。③ 看訊號共識與維持天數——共識一致且趨勢還新時,風險報酬較好。"],
-    ["多時間維度圖怎麼看?","同一檔股票在不同時間尺度趨勢可能相反(短期回檔、長期上升)。切換 5天~5年 能看清『現在是大趨勢中的小波動,還是趨勢真的反轉』。"],
-    ["大盤 S&P 500 是什麼?","美國 500 家最大公司的綜合指數,代表整體美股。圖中灰色虛線即大盤(已等比例對齊),個股在它之上=強於大盤(真強),之下=被大盤拉著走(弱)。"],
-    ["支撐位、壓力位怎麼用?","支撐 = 近60日最低價、壓力 = 近60日最高價。盤整時股價常在兩者間來回;有效突破壓力常代表轉強,有效跌破支撐則轉弱,許多人以此設停損點。"],
-    ["基本面數字怎麼看?","本益比代表貴或便宜(和同業、自己歷史比);EPS/營收年增率代表成長動能。高成長可支撐高本益比;成長放緩而本益比仍高就是風險。"],
-    ["資料多久更新?","週二~六台灣早上 6 點(美股收盤後)雲端自動更新,手機打開即最新。資料來源 Yahoo Finance,非即時報價。"],
-    ["新手建議?","① 先觀察幾週,熟悉趨勢與訊號 ② 只投入虧光也不影響生活的錢 ③ 留意財報日,新手可避開財報前後進出 ④ 分散投資,別把錢押在一檔。"]
+    ["\u9019\u500b App \u5728\u505a\u4ec0\u9ebc?\u4e0d\u505a\u4ec0\u9ebc?","\u5b83\u63cf\u8ff0\u300c\u73fe\u5728\u7684\u8da8\u52e2\u8207\u4e8b\u5be6\u300d:\u8da8\u52e2\u5224\u5b9a\u3001\u8f49\u6298\u9ede\u3001\u8a0a\u865f\u5f59\u6574\u3001\u6280\u8853\u6307\u6a19\u3001\u57fa\u672c\u9762\u3001\u8ca1\u5831\u65e5\u3001\u65b0\u805e\u3002\u5b83\u4e0d\u9810\u6e2c\u672a\u4f86\u3001\u4e0d\u7d66\u8cb7\u8ce3\u5efa\u8b70\u2014\u2014\u56e0\u70ba\u6c92\u6709\u4efb\u4f55\u5de5\u5177\u80fd\u7a69\u5b9a\u9810\u6e2c\u80a1\u50f9\u3002\u770b\u61c2\u73fe\u6cc1\u5f8c,\u8cb7\u8ce3\u7531\u4f60\u81ea\u5df1\u6c7a\u5b9a\u3002"],
+    ["\u4e0a\u5347/\u4e0b\u964d/\u76e4\u6574\u600e\u9ebc\u5224\u5b9a?","\u6280\u8853\u5206\u6790\u6a19\u6e96\u5b9a\u7fa9:\u2460 \u4e0a\u5347\u8da8\u52e2 = \u80a1\u50f9\u7ad9\u4e0a20\u65e5\u5747\u7dda\u3001\u5747\u7dda\u591a\u982d\u6392\u5217(20\u65e5>60\u65e5)\u300160\u65e5\u5747\u7dda\u5411\u4e0a\u3001ADX\u226520\u3002\u2461 \u4e0b\u964d\u8da8\u52e2 = \u5b8c\u5168\u76f8\u53cd\u3002\u2462 \u76e4\u6574 = ADX<20 \u6216\u5747\u7dda\u7cfe\u7d50\u3002"],
+    ["\u8f49\u6298\u9ede\u80fd\u5373\u6642\u6293\u5230\u55ce?","\u4e0d\u80fd\u3002\u8f49\u6298\u9ede\u53ea\u80fd\u4e8b\u5f8c\u5e7e\u5929\u78ba\u8a8d\u3002\u5716\u4e0a\u7d2b\u8272\u2605\u662f\u5df2\u78ba\u8a8d\u7684\u6b77\u53f2\u8f49\u6298\u9ede\u3002\u9ec3\u8272\u300c\u89c0\u5bdf\u4e2d\u300d\u63d0\u793a\u4ee3\u8868\u53ef\u80fd\u6b63\u5728\u8f49\u63db\u4f46\u5c1a\u672a\u78ba\u8a8d\u3002"],
+    ["\u5169\u6b65\u9a5f\u64cd\u4f5c\u6cd5\u600e\u9ebc\u7528?","\u53ea\u770b\u5169\u4ef6\u4e8b:\u2460\u8da8\u52e2\u5361\u7247\u2461\u8a0a\u865f\u5171\u8b58(\u504f\u591a/\u504f\u7a7a\u6578\u5b57)\u3002\u4e0a\u5347+\u504f\u591a\u591a\u2192\u7559\u610f\u8cb7\u9032(\u5225\u8ffd\u9ad8,\u56de\u652f\u64d0\u518d\u9032\u3001\u8a2d\u505c\u640d);\u4e0b\u964d+\u504f\u7a7a\u591a\u2192\u7559\u610f\u6e1b\u78bc;\u5176\u9918\u89c0\u671b\u3002"],
+    ["\u6301\u80a1\u8a18\u9304\u6703\u4e0d\u6703\u4e0d\u898b?","\u6301\u80a1\u53ea\u5b58\u5728\u4f60\u9019\u53f0\u88dd\u7f6e\u7684\u700f\u89bd\u5668,\u4e0d\u6703\u4e0a\u50b3(\u4fdd\u8b77\u96b1\u79c1)\u3002\u4f46\u4e5f\u56e0\u6b64,\u63db\u624b\u6a5f\u6216\u6e05\u9664\u700f\u89bd\u5668\u8cc7\u6599\u6703\u6d88\u5931,\u9069\u5408\u96a8\u624b\u770b\u640d\u76ca\u3002"],
+    ["\u5927\u76e4 S&P 500 \u662f\u4ec0\u9ebc?","\u7f8e\u570b 500 \u5bb6\u6700\u5927\u516c\u53f8\u7684\u7d9c\u5408\u6307\u6578,\u4ee3\u8868\u6574\u9ad4\u7f8e\u80a1\u3002\u5716\u4e2d\u7070\u8272\u865b\u7dda\u5373\u5927\u76e4,\u500b\u80a1\u5728\u5b83\u4e4b\u4e0a=\u5f37\u65bc\u5927\u76e4\u3002"],
+    ["\u8cc7\u6599\u591a\u4e45\u66f4\u65b0?","\u9031\u4e8c~\u516d\u53f0\u7063\u65e9\u4e0a 6 \u9ede(\u7f8e\u80a1\u6536\u76e4\u5f8c)\u96f2\u7aef\u81ea\u52d5\u66f4\u65b0\u3002\u8cc7\u6599\u4f86\u6e90 Yahoo Finance,\u975e\u5373\u6642\u5831\u50f9\u3002"],
+    ["\u65b0\u624b\u5efa\u8b70?","\u2460 \u5148\u89c0\u5bdf\u5e7e\u9031 \u2461 \u53ea\u6295\u5165\u8667\u5149\u4e5f\u4e0d\u5f71\u97ff\u751f\u6d3b\u7684\u9322 \u2462 \u7559\u610f\u8ca1\u5831\u65e5 \u2463 \u5206\u6563\u6295\u8cc7\u3002"]
   ];
-  screen.innerHTML = `<p class="hint">點擊展開,每篇 30 秒讀完。</p>` +
-    faqs.map(f=>`<div class="card faq" onclick="this.classList.toggle('open')"><b>▸ ${f[0]}</b><p>${f[1]}</p></div>`).join("");
+  screen.innerHTML = `<p class="hint">\u9ede\u64ca\u5c55\u958b,\u6bcf\u7bc7 30 \u79d2\u8b80\u5b8c\u3002</p>` +
+    faqs.map(f=>`<div class="card faq" onclick="this.classList.toggle('open')"><b>\u25b8 ${f[0]}</b><p>${f[1]}</p></div>`).join("");
 }
 
 document.querySelectorAll("nav button").forEach(b=>b.addEventListener("click",()=>{
   document.querySelectorAll("nav button").forEach(x=>x.classList.remove("active"));
   b.classList.add("active");
-  ({watch:renderWatch, learn:renderLearn})[b.dataset.tab]();
+  ({watch:renderWatch, portfolio:renderPortfolio, learn:renderLearn})[b.dataset.tab]();
 }));
 renderWatch();
 </script>

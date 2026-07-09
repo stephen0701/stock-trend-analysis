@@ -1,32 +1,41 @@
 {
-  "updated": "2026-06-07 14:26",
+  "updated": "2026-07-09 21:47",
   "stocks": {
     "NVDA": {
-      "trailingPE": 31.457056,
-      "forwardPE": 16.172209,
+      "trailingPE": 30.929478,
+      "forwardPE": 15.823581,
       "earningsGrowth": 2.145,
       "revenueGrowth": 0.852,
       "dividendYield": 0.49,
-      "marketCap": 4967727366144,
-      "nextEarnings": "2026-08-26"
+      "marketCap": 4891903262720,
+      "nextEarnings": "2026-08-27"
     },
     "GOOG": {
-      "trailingPE": 27.94194,
-      "forwardPE": 25.292856,
+      "trailingPE": 27.372974,
+      "forwardPE": 24.349632,
       "earningsGrowth": 0.82,
       "revenueGrowth": 0.218,
-      "dividendYield": 0.24,
-      "marketCap": 4460419481600,
+      "dividendYield": 0.25,
+      "marketCap": 4325568151552,
       "nextEarnings": "2026-07-23"
     },
     "LLY": {
-      "trailingPE": 40.164005,
-      "forwardPE": 25.43093,
+      "trailingPE": 43.110954,
+      "forwardPE": 27.144114,
       "earningsGrowth": 1.699,
       "revenueGrowth": 0.555,
-      "dividendYield": 0.61,
-      "marketCap": 1008934060032,
+      "dividendYield": 0.57,
+      "marketCap": 1084500213760,
       "nextEarnings": "2026-08-05"
+    },
+    "DRAM": {
+      "trailingPE": 29.432566,
+      "forwardPE": null,
+      "earningsGrowth": null,
+      "revenueGrowth": null,
+      "dividendYield": null,
+      "marketCap": null,
+      "nextEarnings": null
     }
   }
 }

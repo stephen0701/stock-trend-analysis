@@ -15,7 +15,7 @@ import pandas as pd
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 RAW = os.path.join(ROOT, "data", "raw")
 OUT = os.path.join(ROOT, "data", "processed")
-WATCHLIST = ["NVDA", "GOOG", "LLY"]
+WATCHLIST = ["NVDA", "GOOG", "LLY", "DRAM"]
 LOOKBACK_DAYS = 504
 MOVE_THRESHOLD = 0.04
 

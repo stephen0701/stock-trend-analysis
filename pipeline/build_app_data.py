@@ -20,6 +20,7 @@ INFO = {
     "NVDA": {"name": "NVIDIA", "sub": "科技/AI 晶片"},
     "GOOG": {"name": "Alphabet (Google)", "sub": "科技/雲端與廣告"},
     "LLY": {"name": "Eli Lilly 禮來", "sub": "醫療健康/製藥"},
+    "DRAM": {"name": "Roundhill 記憶體 ETF", "sub": "科技/記憶體晶片 ETF"},
 }
 CHART_DAYS = 1260   # 約 5 年日線,前端依時間維度切片
 
@@ -192,7 +193,7 @@ def technicals(df, spx):
                 ("超賣(<30,可能反彈)" if rsi < 30 else
                  ("偏強" if rsi >= 55 else ("偏弱" if rsi <= 45 else "中性"))))
     inds = [
-        {"key": "均線排列", "value": "20日 {:,.0f} / 60日 {:,.0f} / 120日 {:,.0f}".format(m20, m60, m120),
+        {"key": "均線排列", "value": "20日 {:,.0f} / 60日 {:,.0f} / 120日 {}".format(m20, m60, ("{:,.0f}".format(m120) if m120 == m120 else "—(資料不足)")),
          "read": "多頭排列" if bull_stack else ("空頭排列" if bear_stack else "糾結"),
          "bias": bias(bull_stack, bear_stack)},
         {"key": "相對大盤強弱", "value": "1月 {:+.1f}% / 3月 {:+.1f}%".format(rs["1m"], rs["3m"]),
@@ -321,6 +322,8 @@ def main():
             "regime": reg,
             "dates": [x.strftime("%Y-%m-%d") for x in tail.index],
             "close": [round(float(x), 2) for x in tail["Close"]],
+            "dayHigh": round(float(df["High"].iloc[-1]), 2),
+            "dayLow": round(float(df["Low"].iloc[-1]), 2),
             "volume": [int(x) for x in tail["Volume"]],
             "spx": [float(x) for x in spx_norm],
             "fundamentals": fundamentals_card(f),
@@ -338,8 +341,8 @@ def main():
     print("app/data.js updated ({})".format(data["updated"]))
     for t, v in data["stocks"].items():
         r = v["regime"]
-        print("  {} {} | 維持 {} 日(自 {}) | 訊號 多{}/空{}/中{}".format(
-            t, v["trendTerm"], r.get("heldBars"), r.get("sinceDate"),
+        print("  {} {} | held {} bars | signals {}/{}/{}".format(
+            t, v["trendTerm"], r.get("heldBars"),
             v["signals"]["bull"], v["signals"]["bear"], v["signals"]["neutral"]))
 
 

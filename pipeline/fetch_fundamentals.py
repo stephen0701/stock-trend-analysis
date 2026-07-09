@@ -10,7 +10,7 @@ from datetime import datetime
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 OUT = os.path.join(ROOT, "data", "processed")
-WATCHLIST = ["NVDA", "GOOG", "LLY"]
+WATCHLIST = ["NVDA", "GOOG", "LLY", "DRAM"]
 KEYS = ["trailingPE", "forwardPE", "earningsGrowth", "revenueGrowth", "dividendYield", "marketCap"]
 
 

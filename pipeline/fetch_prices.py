@@ -9,7 +9,7 @@ from datetime import date
 
 import pandas as pd
 
-WATCHLIST = ["NVDA", "GOOG", "LLY"]
+WATCHLIST = ["NVDA", "GOOG", "LLY", "DRAM"]
 BENCHMARK = "^GSPC"            # S&P 500,存成 GSPC.csv
 START = "2005-01-01"
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
