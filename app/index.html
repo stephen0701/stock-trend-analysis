@@ -150,6 +150,15 @@
   </div>
 <script>
 const D = window.APP_DATA;
+const validPrice = v => typeof v === "number" && Number.isFinite(v) && v > 0;
+function hasQuote(s){
+  return s && Array.isArray(s.close) && s.close.length >= 2 &&
+    validPrice(s.close[s.close.length-1]) && validPrice(s.close[s.close.length-2]) &&
+    validPrice(s.dayHigh) && validPrice(s.dayLow);
+}
+function unavailable(s){
+  return `<div class="card"><b>${s.name}</b><p>報價資料暫時無法使用，請等待資料更新。暫不判定趨勢。</p></div>`;
+}
 const trendIcon = {up:"📈", down:"📉", range:"↔️"};
 const trendColor = {up:"#22c55e", down:"#ef4444", range:"#eab308"};
 const TF = {"5天":5, "1月":21, "3月":63, "1年":252, "5年":1260};
@@ -195,7 +204,7 @@ function addLot(){
   const shares = parseFloat(document.getElementById("p-shares").value);
   const price = parseFloat(document.getElementById("p-price").value);
   const date = document.getElementById("p-date").value;
-  if(!t || !(shares>0) || !(price>0)){ alert("請填股票、股數、購買價(股數與價格需大於 0)"); return; }
+  if(!t || !validPrice(shares) || !validPrice(price)){ alert("請填股票、股數、購買價(股數與價格需大於 0)"); return; }
   const arr = getPortfolio(); arr.push({ticker:t, shares:shares, price:price, date:date||""});
   savePortfolio(arr); renderPortfolio();
 }
@@ -204,7 +213,7 @@ function delLot(i){ if(confirm("刪除這一筆?")){ const arr=getPortfolio(); a
 function renderPortfolio(){
   const arr = getPortfolio();
   const cur = t => (D.stocks[t] ? D.stocks[t].close[D.stocks[t].close.length-1] : null);
-  const n0 = v => v.toLocaleString(undefined,{maximumFractionDigits:0});
+  const n0 = v => Number.isFinite(v) ? v.toLocaleString(undefined,{maximumFractionDigits:0}) : "—";
   const opts = Object.keys(D.stocks).map(k=>`<option value="${k}">${k}・${D.stocks[k].name}</option>`).join("");
   let html = `<div class="card holding"><h3>➕ 新增持股(只存在你的裝置,不會上傳)</h3>
     <div class="hform">
@@ -223,6 +232,12 @@ function renderPortfolio(){
   let totCost = 0, totMv = 0, cards = "";
   Object.keys(byT).forEach(t => {
     const lots = byT[t];
+    if(!hasQuote(D.stocks[t])){
+      totMv = NaN;
+      cards += `<div class="card holding"><h3>${t}</h3><p>報價暫缺，市值及損益暫不計算；持股紀錄仍保留。</p></div>`;
+      totCost += lots.reduce((a,l)=>a+l.shares*l.price, 0);
+      return;
+    }
     const sh = lots.reduce((a,l)=>a+l.shares, 0);
     const cost = lots.reduce((a,l)=>a+l.shares*l.price, 0);
     const avg = cost/sh;
@@ -243,7 +258,7 @@ function renderPortfolio(){
   });
   const tpl = totMv-totCost, tplp = totCost ? tpl/totCost*100 : 0;
   const tcls = tpl>=0 ? "up" : "down", tsign = tpl>=0 ? "+" : "-";
-  html += `<div class="card holding total"><h3>📊 全部持股總覽</h3>
+  html += !Number.isFinite(totMv) ? `<div class="card holding total"><h3>📊 全部持股總覽</h3><p>部分報價暫缺，總市值與總損益暫不計算。</p></div>` + cards : `<div class="card holding total"><h3>📊 全部持股總覽</h3>
     <div class="hrow"><span>總成本 → 總市值</span><b>US$${n0(totCost)} → US$${n0(totMv)}</b></div>
     <div class="hrow big"><span>總損益</span><b class="${tcls}">${tsign}US$${n0(Math.abs(tpl))}(${tsign}${Math.abs(tplp).toFixed(1)}%)</b></div>
   </div>` + cards;
@@ -253,18 +268,20 @@ function renderPortfolio(){
 function renderWatch(){
   screen.innerHTML = `<p class="hint">點任一檔看完整分析。圖示 = 目前趨勢判定:📈 上升 📉 下降 ↔️ 盤整(每日更新;美股慣例綠漲紅跌)</p>` +
   Object.entries(D.stocks).map(([k,s])=>{
+    if(!hasQuote(s)) return unavailable(s);
     const c = s.close, last = c[c.length-1], chg = ((last/c[c.length-2]-1)*100).toFixed(2);
     const cls = chg>=0 ? "up":"down", sign = chg>=0 ? "+":"";
     const earn = (s.daysToEarnings!==null && s.daysToEarnings<=14) ? `<span class="earn-chip">⚠️ ${s.daysToEarnings} 天後財報</span>` : "";
     return `<div class="stock-row" onclick="renderDetail('${k}')">
       <div class="t-ico">${trendIcon[s.trend]}</div>
-      <div class="name"><b>${s.name}</b><span style="color:${trendColor[s.trend]}">${s.trendTerm}</span>${earn}</div>
+      <div class="name"><b>${s.name}</b><span style="color:${trendColor[s.trend]}">${s.trendTerm}</span><small>報價日期 ${s.priceDate || s.dates[s.dates.length-1]}</small>${earn}</div>
       <div class="px"><b>US$${last.toLocaleString()}</b><span class="pct ${cls}">${sign}${chg}%</span>${(s.dayHigh!=null&&s.dayLow!=null)?`<span class="hilo">高 ${s.dayHigh.toLocaleString()} / 低 ${s.dayLow.toLocaleString()}</span>`:""}</div>
     </div>`;
   }).join("");
 }
 
 function renderDetail(key){
+  if(!hasQuote(D.stocks[key])){ screen.innerHTML = unavailable(D.stocks[key]); return; }
   const s = D.stocks[key], c = s.close, last = c[c.length-1];
   const r = s.regime || {};
   const earnTxt = s.daysToEarnings!==null

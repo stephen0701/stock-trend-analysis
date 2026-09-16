@@ -26,6 +26,11 @@ jobs:
       - name: Install dependencies
         run: pip install yfinance pandas
 
+      - name: Regression tests
+        run: |
+          python -m unittest discover -s tests -v
+          node tests/test_frontend.cjs
+
       - name: Run daily pipeline
         run: python run_daily.py
 

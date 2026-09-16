@@ -10,6 +10,7 @@ from datetime import datetime, date, timezone, timedelta
 
 import numpy as np
 import pandas as pd
+from price_validation import read_prices
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 RAW = os.path.join(ROOT, "data", "raw")
@@ -39,7 +40,7 @@ def adx_series(df, n=14):
     pdi = 100 * pdm.ewm(alpha=1 / n, adjust=False).mean() / atr
     ndi = 100 * ndm.ewm(alpha=1 / n, adjust=False).mean() / atr
     dx = 100 * (pdi - ndi).abs() / (pdi + ndi)
-    return dx.ewm(alpha=1 / n, adjust=False).mean()
+    return dx.fillna(0).ewm(alpha=1 / n, adjust=False).mean()
 
 
 def trend_label(px, m20, m60, m60_rising, adx):
@@ -148,17 +149,19 @@ def regime_info(df):
 
 
 def technicals(df, spx):
+    if len(df) < 65 or len(spx) < 64:
+        raise ValueError("At least 65 valid price rows are required for analysis")
     c, h, l = df["Close"], df["High"], df["Low"]
     px = float(c.iloc[-1])
     ma20, ma60, ma120 = c.rolling(20).mean(), c.rolling(60).mean(), c.rolling(120).mean()
     d = c.diff()
     up = d.clip(lower=0).rolling(14).mean()
     dn = (-d.clip(upper=0)).rolling(14).mean()
-    rsi = float((100 - 100 / (1 + up / dn)).iloc[-1])
+    rsi = float((100 - 100 / (1 + up / dn)).mask((up == 0) & (dn == 0), 50).iloc[-1])
     macd_line = _ema(c, 12) - _ema(c, 26)
     macd_hist = float((macd_line - _ema(macd_line, 9)).iloc[-1])
     sd = c.rolling(20).std()
-    pb = float(((c - (ma20 - 2 * sd)) / (4 * sd)).iloc[-1])
+    pb = float(((c - (ma20 - 2 * sd)) / (4 * sd)).mask(sd == 0, 0.5).iloc[-1])
     adx = float(adx_series(df).iloc[-1])
     vol_ann = float(c.pct_change().rolling(20).std().iloc[-1]) * (252 ** 0.5) * 100
     m20, m60, m120 = float(ma20.iloc[-1]), float(ma60.iloc[-1]), float(ma120.iloc[-1])
@@ -293,14 +296,14 @@ def main():
         events = json.load(fp)
     with open(os.path.join(PROC, "fundamentals.json"), encoding="utf-8") as fp:
         funda = json.load(fp)
-    spx_df = pd.read_csv(os.path.join(RAW, "GSPC.csv"), parse_dates=["Date"], index_col="Date")
+    spx_df = read_prices(os.path.join(RAW, "GSPC.csv"))
     spx = spx_df["Close"]
 
     TPE = timezone(timedelta(hours=8))
     now_tpe = datetime.now(timezone.utc).astimezone(TPE).strftime("%Y-%m-%d %H:%M")
     data = {"updated": now_tpe + " (台灣時間)", "stocks": {}}
     for t, meta in INFO.items():
-        df = pd.read_csv(os.path.join(RAW, t + ".csv"), parse_dates=["Date"], index_col="Date")
+        df = read_prices(os.path.join(RAW, t + ".csv"))
         tech = technicals(df, spx)
         reg = regime_info(df)
         f = funda["stocks"].get(t, {})
@@ -320,6 +323,7 @@ def main():
         entry.update(tech)
         entry.update({
             "regime": reg,
+            "priceDate": df.index[-1].strftime("%Y-%m-%d"),
             "dates": [x.strftime("%Y-%m-%d") for x in tail.index],
             "close": [round(float(x), 2) for x in tail["Close"]],
             "dayHigh": round(float(df["High"].iloc[-1]), 2),
@@ -334,10 +338,11 @@ def main():
             "news": ev["news"],
         })
         data["stocks"][t] = entry
-    js = "window.APP_DATA = " + json.dumps(data, ensure_ascii=False) + ";"
+    js = "window.APP_DATA = " + json.dumps(data, ensure_ascii=False, allow_nan=False) + ";"
     os.makedirs(APP, exist_ok=True)
-    with open(os.path.join(APP, "data.js"), "w", encoding="utf-8") as fp:
+    with open(os.path.join(APP, "data.js.tmp"), "w", encoding="utf-8") as fp:
         fp.write(js)
+    os.replace(os.path.join(APP, "data.js.tmp"), os.path.join(APP, "data.js"))
     print("app/data.js updated ({})".format(data["updated"]))
     for t, v in data["stocks"].items():
         r = v["regime"]

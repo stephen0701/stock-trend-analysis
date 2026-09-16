@@ -8,6 +8,7 @@ import sys
 from datetime import date
 
 import pandas as pd
+from price_validation import validate_prices
 
 WATCHLIST = ["NVDA", "GOOG", "LLY", "DRAM"]
 BENCHMARK = "^GSPC"            # S&P 500,存成 GSPC.csv
@@ -25,7 +26,7 @@ def fetch_yfinance(ticker):
         df.columns = df.columns.get_level_values(0)
     df = df[["Open", "High", "Low", "Close", "Volume"]].round(4)
     df.index.name = "Date"
-    return df
+    return validate_prices(df, ticker)
 
 
 def fetch_stooq(ticker):
@@ -37,7 +38,7 @@ def fetch_stooq(ticker):
     df = df[df.index >= START]
     if "Volume" not in df.columns:
         df["Volume"] = 0
-    return df[["Open", "High", "Low", "Close", "Volume"]].round(4)
+    return validate_prices(df[["Open", "High", "Low", "Close", "Volume"]].round(4), ticker)
 
 
 def main():
@@ -52,7 +53,8 @@ def main():
                 print("[{}] yfinance failed ({}), trying stooq...".format(t, e))
                 df, src = fetch_stooq(t), "stooq"
             path = os.path.join(RAW_DIR, fname)
-            df.to_csv(path)
+            df.to_csv(path + ".tmp")
+            os.replace(path + ".tmp", path)
             print("[{}] OK ({}) {} rows {} ~ {}".format(t, src, len(df), df.index[0].date(), df.index[-1].date()))
         except Exception as e:
             ok = False

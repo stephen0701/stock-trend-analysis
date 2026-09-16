@@ -11,6 +11,7 @@ import re
 from datetime import datetime
 
 import pandas as pd
+from price_validation import read_prices
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 RAW = os.path.join(ROOT, "data", "raw")
@@ -44,7 +45,7 @@ def classify(text):
 
 
 def price_events(ticker):
-    df = pd.read_csv(os.path.join(RAW, ticker + ".csv"), parse_dates=["Date"], index_col="Date")
+    df = read_prices(os.path.join(RAW, ticker + ".csv"))
     df = df.tail(LOOKBACK_DAYS)
     ret = df["Close"].pct_change()
     sigma = ret.std()
