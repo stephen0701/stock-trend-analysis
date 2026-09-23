@@ -159,6 +159,13 @@ function hasQuote(s){
 function unavailable(s){
   return `<div class="card"><b>${s.name}</b><p>報價資料暫時無法使用，請等待資料更新。暫不判定趨勢。</p></div>`;
 }
+function quoteWarning(s){
+  const date = s.priceDate || (s.dates || []).at(-1);
+  const missing = s.quoteStatus?.missingDates || [];
+  const old = date && Date.now() - Date.parse(date + "T00:00:00Z") > 4*86400000;
+  if(missing.length) return `<p class="hint" style="color:#eab308">⚠️ ${missing.join("、")} 行情未完整，暫用 ${date} 收盤資料；趨勢與損益也以該日計算。</p>`;
+  return old ? `<p class="hint" style="color:#eab308">⚠️ 報價停在 ${date}，可能尚未更新，請留意資料日期。</p>` : "";
+}
 const trendIcon = {up:"📈", down:"📉", range:"↔️"};
 const trendColor = {up:"#22c55e", down:"#ef4444", range:"#eab308"};
 const TF = {"5天":5, "1月":21, "3月":63, "1年":252, "5年":1260};
@@ -190,7 +197,7 @@ function showGloss(k){
   document.getElementById("mBody").textContent = GLOSSARY[k] || "";
   document.getElementById("modalBg").classList.add("show");
 }
-document.getElementById("upd").textContent = "資料更新: " + D.updated;
+document.getElementById("upd").textContent = "資料產生: " + D.updated;
 const screen = document.getElementById("screen");
 let chart = null;
 
@@ -247,7 +254,7 @@ function renderPortfolio(){
     totCost += cost; totMv += mv;
     const cls = pl>=0 ? "up" : "down", sign = pl>=0 ? "+" : "-";
     const name = D.stocks[t] ? D.stocks[t].name : t;
-    cards += `<div class="card holding"><h3>${t}・${name}</h3>
+    cards += `<div class="card holding"><h3>${t}・${name}</h3>${quoteWarning(D.stocks[t])}
       <div class="hrow"><span>平均成本價</span><b>US$${avg.toLocaleString(undefined,{maximumFractionDigits:2})}</b></div>
       <div class="hrow"><span>持有股數</span><b>${sh.toLocaleString()}</b></div>
       <div class="hrow"><span>目前股價</span><b>US$${price!=null?price.toLocaleString():"—"}</b></div>
@@ -274,7 +281,7 @@ function renderWatch(){
     const earn = (s.daysToEarnings!==null && s.daysToEarnings<=14) ? `<span class="earn-chip">⚠️ ${s.daysToEarnings} 天後財報</span>` : "";
     return `<div class="stock-row" onclick="renderDetail('${k}')">
       <div class="t-ico">${trendIcon[s.trend]}</div>
-      <div class="name"><b>${s.name}</b><span style="color:${trendColor[s.trend]}">${s.trendTerm}</span><small>報價日期 ${s.priceDate || s.dates[s.dates.length-1]}</small>${earn}</div>
+      <div class="name"><b>${s.name}</b><span style="color:${trendColor[s.trend]}">${s.trendTerm}</span><small>報價日期 ${s.priceDate || s.dates[s.dates.length-1]}</small>${quoteWarning(s)}${earn}</div>
       <div class="px"><b>US$${last.toLocaleString()}</b><span class="pct ${cls}">${sign}${chg}%</span>${(s.dayHigh!=null&&s.dayLow!=null)?`<span class="hilo">高 ${s.dayHigh.toLocaleString()} / 低 ${s.dayLow.toLocaleString()}</span>`:""}</div>
     </div>`;
   }).join("");
@@ -301,7 +308,7 @@ function renderDetail(key){
   screen.innerHTML = `
     <button class="back" onclick="renderWatch()">‹ 返回自選股</button>
     <div class="det-head">
-      <div><h2>${s.name}</h2><div class="sub">${key}・${s.sub}</div></div>
+      <div><h2>${s.name}</h2><div class="sub">${key}・${s.sub}</div>${quoteWarning(s)}</div>
       <div class="det-price"><b>US$${last.toLocaleString()}</b></div>
     </div>
     <div class="trend-card trend-${s.trend}">

@@ -8,7 +8,7 @@ import pandas as pd
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "pipeline"))
-from price_validation import validate_prices, read_prices
+from price_validation import validate_prices, read_prices, prepare_download
 import build_app_data as build
 import fetch_prices
 
@@ -31,6 +31,39 @@ class PriceTests(unittest.TestCase):
     def test_sort_and_duplicate_dates(self):
         self.assertTrue(validate_prices(self.df.iloc[::-1]).index.is_monotonic_increasing)
         with self.assertRaises(ValueError): validate_prices(pd.concat([self.df, self.df.tail(1)]))
+
+    def test_missing_tail_uses_previous_complete_session(self):
+        df = self.df.copy()
+        df.iloc[-1, df.columns.get_loc("Close")] = np.nan
+        result = prepare_download(df, today=df.index[-1])
+        self.assertEqual(result.index[-1], df.index[-2])
+        self.assertEqual(result.attrs["missingDates"], [df.index[-1].strftime("%Y-%m-%d")])
+        self.assertEqual(result.Close.iloc[-1], df.Close.iloc[-2])
+
+    def test_interior_corruption_and_old_data_rejected(self):
+        df = self.df.copy()
+        df.iloc[-3, df.columns.get_loc("Close")] = np.nan
+        with self.assertRaises(ValueError): prepare_download(df, today=df.index[-1])
+        with self.assertRaises(ValueError): prepare_download(self.df, today="2026-09-23")
+        df.iloc[-4:, df.columns.get_loc("Close")] = np.nan
+        with self.assertRaises(ValueError): prepare_download(df, today=df.index[-1])
+
+    def test_retry_recovers_or_returns_recent_partial(self):
+        partial = self.df.iloc[:-1].copy()
+        partial.attrs["missingDates"] = ["2026-07-09"]
+        with patch.object(fetch_prices, "fetch_yfinance", side_effect=[partial, self.df]), patch.object(fetch_prices.time, "sleep"), patch.object(fetch_prices, "fetch_stooq") as backup:
+            result, source = fetch_prices.fetch_best("DRAM")
+            self.assertEqual(result.index[-1], self.df.index[-1])
+            backup.assert_not_called()
+        with patch.object(fetch_prices, "fetch_yfinance", return_value=partial), patch.object(fetch_prices.time, "sleep"), patch.object(fetch_prices, "fetch_stooq", side_effect=ValueError("404")):
+            result, source = fetch_prices.fetch_best("DRAM")
+            self.assertEqual(result.attrs["missingDates"], ["2026-07-09"])
+
+    def test_benchmark_later_day_does_not_change_relative_return(self):
+        original = build.technicals(self.df, self.df.Close)
+        benchmark = pd.concat([self.df.Close, pd.Series([9999.], index=[self.df.index[-1] + pd.Timedelta(days=1)])])
+        actual = build.technicals(self.df, benchmark)
+        self.assertEqual(original["indicators"][1], actual["indicators"][1])
 
     def test_empty(self):
         with self.assertRaises(ValueError): validate_prices(self.df.iloc[:0])
@@ -55,7 +88,7 @@ class PriceTests(unittest.TestCase):
 
     def test_fallback_and_failed_fetch_preserves_csv(self):
         with tempfile.TemporaryDirectory() as folder:
-            with patch.object(fetch_prices, "RAW_DIR", folder), patch.object(fetch_prices, "WATCHLIST", []), patch.object(fetch_prices, "fetch_yfinance", side_effect=ValueError("bad quote")), patch.object(fetch_prices, "fetch_stooq", return_value=self.df):
+            with patch.object(fetch_prices.time, "sleep"), patch.object(fetch_prices, "RAW_DIR", folder), patch.object(fetch_prices, "WATCHLIST", []), patch.object(fetch_prices, "fetch_yfinance", side_effect=ValueError("bad quote")), patch.object(fetch_prices, "fetch_stooq", return_value=self.df):
                 with self.assertRaises(SystemExit) as status: fetch_prices.main()
                 self.assertEqual(status.exception.code, 0)
                 target = Path(folder) / "GSPC.csv"

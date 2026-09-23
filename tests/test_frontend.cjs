@@ -11,11 +11,14 @@ function run(value, bad = true) {
  vm.createContext(context);
  vm.runInContext(fs.readFileSync(path.join(root,'app/data.js'),'utf8'),context);
  if(bad) for(const s of Object.values(context.window.APP_DATA.stocks)) {s.close[s.close.length-1]=value; s.dayHigh=value;}
+ for(const s of Object.values(context.window.APP_DATA.stocks)) s.quoteStatus = {missingDates:['2026-09-22']};
  vm.runInContext(code, context);
+ if(!bad) assert(elements.screen.innerHTML.includes('行情未完整'));
  assert(!/NaN|非數值|Infinity/.test(elements.screen.innerHTML));
  if(bad) assert(elements.screen.innerHTML.includes('暫不判定趨勢'));
  if(bad) {vm.runInContext("renderDetail('NVDA')",context); assert(elements.screen.innerHTML.includes('暫不判定趨勢'));}
  vm.runInContext('renderPortfolio()',context);
+ if(!bad) assert(elements.screen.innerHTML.includes('行情未完整'));
  assert(!/NaN|非數值|Infinity/.test(elements.screen.innerHTML));
  if(bad) assert(elements.screen.innerHTML.includes('總市值與總損益暫不計算'));
 }

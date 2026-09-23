@@ -167,6 +167,10 @@ def technicals(df, spx):
     m20, m60, m120 = float(ma20.iloc[-1]), float(ma60.iloc[-1]), float(ma120.iloc[-1])
     ma60_rising = m60 > float(ma60.iloc[-6])
 
+    # Compare returns on the same trading dates even when a trailing quote is missing.
+    spx = spx.reindex(c.index, method="ffill")
+    if spx.isna().any():
+        raise ValueError("Benchmark does not cover stock history")
     rs = {}
     for label, n in (("1m", 21), ("3m", 63)):
         rs[label] = round(float((c.iloc[-1] / c.iloc[-n - 1] - 1) - (spx.iloc[-1] / spx.iloc[-n - 1] - 1)) * 100, 1)
@@ -298,6 +302,11 @@ def main():
         funda = json.load(fp)
     spx_df = read_prices(os.path.join(RAW, "GSPC.csv"))
     spx = spx_df["Close"]
+    status_path = os.path.join(RAW, "price_status.json")
+    status = {}
+    if os.path.exists(status_path):
+        with open(status_path, encoding="utf-8") as fp:
+            status = json.load(fp)
 
     TPE = timezone(timedelta(hours=8))
     now_tpe = datetime.now(timezone.utc).astimezone(TPE).strftime("%Y-%m-%d %H:%M")
@@ -309,7 +318,7 @@ def main():
         f = funda["stocks"].get(t, {})
         ev = events["stocks"][t]
         tail = df.tail(CHART_DAYS)
-        spx_tail = spx.reindex(tail.index).ffill()
+        spx_tail = spx.reindex(tail.index, method="ffill")
         spx_norm = (spx_tail / spx_tail.iloc[0] * float(tail["Close"].iloc[0])).round(2)
         d2e = None
         if f.get("nextEarnings"):
@@ -324,6 +333,7 @@ def main():
         entry.update({
             "regime": reg,
             "priceDate": df.index[-1].strftime("%Y-%m-%d"),
+            "quoteStatus": status.get(t, {}),
             "dates": [x.strftime("%Y-%m-%d") for x in tail.index],
             "close": [round(float(x), 2) for x in tail["Close"]],
             "dayHigh": round(float(df["High"].iloc[-1]), 2),
