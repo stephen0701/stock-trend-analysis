@@ -5,14 +5,51 @@ fetch_prices.py — 抓取追蹤清單 + 大盤(S&P 500)歷史日線
 """
 import os
 import sys
+import argparse
 import json
-import time
-from io import StringIO
-from urllib.request import Request, urlopen
+from pathlib import Path
+import tempfile
 from datetime import date
 
 import pandas as pd
-from price_validation import prepare_download
+import numpy as np
+from price_validation import COLUMNS, normalize, validate_prices
+
+
+def repair_yahoo_history(history, latest, metadata, now=None):
+    """Replace only the SAME completed session with its actual daily OHLCV."""
+    history, latest = normalize(history), normalize(latest)
+    if history.index[-1] != latest.index[-1]:
+        raise ValueError("Yahoo history and single-day response dates differ")
+    regular = metadata.get("currentTradingPeriod", {}).get("regular", {})
+    end, tz = regular.get("end"), metadata.get("exchangeTimezoneName")
+    if not end or not tz:
+        raise ValueError("Yahoo session metadata missing")
+    end = (pd.Timestamp(end, unit="s", tz="UTC") if isinstance(end, (int, float))
+           else pd.Timestamp(end))
+    if end.tzinfo is None:
+        raise ValueError("Session end has no timezone")
+    now = pd.Timestamp(now) if now is not None else pd.Timestamp.now(tz="UTC")
+    if now.tzinfo is None:
+        now = now.tz_localize("UTC")
+    bar_date = latest.index[-1].date()
+    session_date = end.tz_convert(tz).date()
+    if bar_date > session_date or (bar_date == session_date and now < end):
+        raise ValueError("Latest session has not closed")
+    if (now.tz_convert(tz).date() - bar_date).days > 7:
+        raise ValueError("Latest session is more than seven days old")
+    validate_prices(latest)
+    adj = pd.to_numeric(latest["Adj Close"], errors="coerce")
+    if not np.isfinite(adj).all() or not (adj > 0).all():
+        raise ValueError("Single-day adjusted close is missing")
+    cols = COLUMNS + ["Adj Close"]
+    history.loc[latest.index[-1], cols] = latest.iloc[-1][cols]
+    raw = validate_prices(history)
+    ratio = pd.to_numeric(history["Adj Close"], errors="coerce") / raw.Close
+    if not np.isfinite(ratio).all() or not (ratio > 0).all():
+        raise ValueError("Historical adjusted close is invalid")
+    raw[COLUMNS[:4]] = raw[COLUMNS[:4]].mul(ratio, axis=0)
+    return validate_prices(raw).round(4)
 
 WATCHLIST = ["NVDA", "GOOG", "LLY", "DRAM"]
 BENCHMARK = "^GSPC"            # S&P 500,存成 GSPC.csv
@@ -23,77 +60,45 @@ RAW_DIR = os.path.join(ROOT, "data", "raw")
 
 def fetch_yfinance(ticker):
     import yfinance as yf
-    df = yf.download(ticker, start=START, auto_adjust=True, progress=False, timeout=20)
-    if df is None or df.empty:
-        raise RuntimeError("yfinance empty")
-    if isinstance(df.columns, pd.MultiIndex):
-        df.columns = df.columns.get_level_values(0)
-    df = df[["Open", "High", "Low", "Close", "Volume"]].round(4)
-    df.index.name = "Date"
-    return prepare_download(df, ticker)
-
-
-def fetch_stooq(ticker):
-    sym = "^spx" if ticker == "^GSPC" else ticker.lower() + ".us"
-    url = "https://stooq.com/q/d/l/?s={}&i=d".format(sym)
-    with urlopen(Request(url, headers={"User-Agent": "Mozilla/5.0"}), timeout=20) as response:
-        csv = response.read().decode("utf-8-sig")
-    df = pd.read_csv(StringIO(csv), parse_dates=["Date"], index_col="Date")
-    if df.empty:
-        raise RuntimeError("stooq empty")
-    df = df[df.index >= START]
-    if "Volume" not in df.columns:
-        df["Volume"] = 0
-    return prepare_download(df[["Open", "High", "Low", "Close", "Volume"]].round(4), ticker)
-
-
-def fetch_best(ticker):
-    candidates = []
-    for attempt in range(3):
-        try:
-            df = fetch_yfinance(ticker)
-            candidates.append((df, "yfinance"))
-            if not df.attrs.get("missingDates"):
-                return df, "yfinance"
-            print(f"[{ticker}] incomplete sessions {df.attrs['missingDates']}; retrying")
-        except Exception as exc:
-            print(f"[{ticker}] Yahoo attempt {attempt + 1}: {exc}")
-        if attempt < 2:
-            time.sleep(2 ** attempt)
-    try:
-        candidates.append((fetch_stooq(ticker), "stooq"))
-    except Exception as exc:
-        print(f"[{ticker}] Stooq unavailable: {exc}")
-    if not candidates:
-        raise RuntimeError("No valid recent prices from either source")
-    # Prefer the freshest valid session, not an older backup result.
-    return max(candidates, key=lambda item: item[0].index[-1])
+    history = yf.download(ticker, start=START, auto_adjust=False, keepna=True,
+                          progress=False, timeout=20)
+    obj = yf.Ticker(ticker)
+    latest = obj.history(period="1d", auto_adjust=False, actions=False,
+                         keepna=True, timeout=20)
+    return repair_yahoo_history(history, latest, obj.get_history_metadata())
 
 
 def main():
-    os.makedirs(RAW_DIR, exist_ok=True)
-    ok, status = True, {}
-    for t in WATCHLIST + [BENCHMARK]:
-        fname = t.replace("^", "") + ".csv"
-        try:
-            df, src = fetch_best(t)
-            path = os.path.join(RAW_DIR, fname)
-            df.to_csv(path + ".tmp")
-            os.replace(path + ".tmp", path)
-            status[t.replace("^", "")] = {
-                "source": src, "missingDates": df.attrs.get("missingDates", []),
-                "priceDate": df.index[-1].strftime("%Y-%m-%d")}
-            print("[{}] OK ({}) {} rows {} ~ {}".format(t, src, len(df), df.index[0].date(), df.index[-1].date()))
-        except Exception as e:
-            ok = False
-            print("[{}] FAILED: {}".format(t, e), file=sys.stderr)
-    if ok:
-        path = os.path.join(RAW_DIR, "price_status.json")
-        with open(path + ".tmp", "w", encoding="utf-8") as fp:
-            json.dump(status, fp, ensure_ascii=False, allow_nan=False)
-        os.replace(path + ".tmp", path)
-    print("done", date.today(), "" if ok else "(with errors)")
-    sys.exit(0 if ok else 1)
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--provider", choices=["yahoo", "tiingo"], default="yahoo")
+    parser.add_argument("--output-dir", type=Path, default=Path(RAW_DIR))
+    args = parser.parse_args()
+    results, status = {}, {}
+    for ticker in WATCHLIST + [BENCHMARK]:
+        source = "yahoo" if ticker == BENCHMARK else args.provider
+        if source == "tiingo":
+            from tiingo_prices import fetch_tiingo
+            df = fetch_tiingo(ticker, START)
+        else:
+            df = fetch_yfinance(ticker)
+        df = validate_prices(df)
+        if len(df) < 65:
+            raise ValueError(f"{ticker}: insufficient history")
+        name = ticker.replace("^", "")
+        results[name] = df
+        status[name] = {"source":source, "priceDate":df.index[-1].strftime("%Y-%m-%d")}
+        print(f"[{ticker}] {source}: {len(df)} rows; latest {status[name]['priceDate']}")
+    if len({s["priceDate"] for s in status.values()}) != 1:
+        raise ValueError("Stocks and benchmark have different latest dates; no files replaced")
+    args.output_dir.mkdir(parents=True, exist_ok=True)
+    with tempfile.TemporaryDirectory(dir=args.output_dir) as tmp:
+        tmp = Path(tmp)
+        for name, df in results.items():
+            df.to_csv(tmp / (name + ".csv"))
+        (tmp / "price_status.json").write_text(json.dumps(status, allow_nan=False), encoding="utf-8")
+        for path in tmp.iterdir():
+            os.replace(path, args.output_dir / path.name)
+    print("done", date.today())
 
 
 if __name__ == "__main__":
