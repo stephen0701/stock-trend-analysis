@@ -14,9 +14,10 @@ from datetime import date
 import pandas as pd
 import numpy as np
 from price_validation import COLUMNS, normalize, validate_prices
+from yahoo_history import restore_history
 
 
-def repair_yahoo_history(history, latest, metadata, now=None):
+def repair_yahoo_history(history, latest, metadata, now=None, records=None):
     """Replace only the SAME completed session with its actual daily OHLCV."""
     history, latest = normalize(history), normalize(latest)
     if history.index[-1] != latest.index[-1]:
@@ -44,6 +45,8 @@ def repair_yahoo_history(history, latest, metadata, now=None):
         raise ValueError("Single-day adjusted close is missing")
     cols = COLUMNS + ["Adj Close"]
     history.loc[latest.index[-1], cols] = latest.iloc[-1][cols]
+    if records:
+        history = restore_history(history, records)
     raw = validate_prices(history)
     ratio = pd.to_numeric(history["Adj Close"], errors="coerce") / raw.Close
     if not np.isfinite(ratio).all() or not (ratio > 0).all():
@@ -58,14 +61,20 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 RAW_DIR = os.path.join(ROOT, "data", "raw")
 
 
-def fetch_yfinance(ticker):
+def fetch_yfinance(ticker, verified=None):
     import yfinance as yf
-    history = yf.download(ticker, start=START, auto_adjust=False, keepna=True,
+    history = yf.download(ticker, start=START, auto_adjust=False, keepna=True, actions=True,
                           progress=False, timeout=20)
     obj = yf.Ticker(ticker)
     latest = obj.history(period="1d", auto_adjust=False, actions=False,
                          keepna=True, timeout=20)
-    return repair_yahoo_history(history, latest, obj.get_history_metadata())
+    records = verified.get(ticker, {}) if verified is not None else {}
+    result = repair_yahoo_history(history, latest, obj.get_history_metadata(), records=records)
+    if verified is not None:
+        raw = normalize(latest)
+        verified.setdefault(ticker, {})[raw.index[-1].strftime("%Y-%m-%d")] = {
+            col: float(raw.iloc[-1][col]) for col in COLUMNS}
+    return result
 
 
 def main():
@@ -73,6 +82,13 @@ def main():
     parser.add_argument("--provider", choices=["yahoo", "tiingo"], default="yahoo")
     parser.add_argument("--output-dir", type=Path, default=Path(RAW_DIR))
     args = parser.parse_args()
+    seed = Path(ROOT) / "data" / "yahoo_verified_seed.json"
+    verified = json.loads(seed.read_text(encoding="utf-8")) if seed.exists() else {}
+    cache_path = args.output_dir / ".cache" / "yahoo_verified.json"
+    if cache_path.exists():
+        cached = json.loads(cache_path.read_text(encoding="utf-8"))
+        for ticker, records in cached.items():
+            verified.setdefault(ticker, {}).update(records)
     results, status = {}, {}
     for ticker in WATCHLIST + [BENCHMARK]:
         source = "yahoo" if ticker == BENCHMARK else args.provider
@@ -80,7 +96,7 @@ def main():
             from tiingo_prices import fetch_tiingo
             df = fetch_tiingo(ticker, START)
         else:
-            df = fetch_yfinance(ticker)
+            df = fetch_yfinance(ticker, verified)
         df = validate_prices(df)
         if len(df) < 65:
             raise ValueError(f"{ticker}: insufficient history")
@@ -90,6 +106,7 @@ def main():
         print(f"[{ticker}] {source}: {len(df)} rows; latest {status[name]['priceDate']}")
     if len({s["priceDate"] for s in status.values()}) != 1:
         raise ValueError("Stocks and benchmark have different latest dates; no files replaced")
+    cache_json = json.dumps(verified, allow_nan=False)
     args.output_dir.mkdir(parents=True, exist_ok=True)
     with tempfile.TemporaryDirectory(dir=args.output_dir) as tmp:
         tmp = Path(tmp)
@@ -98,6 +115,10 @@ def main():
         (tmp / "price_status.json").write_text(json.dumps(status, allow_nan=False), encoding="utf-8")
         for path in tmp.iterdir():
             os.replace(path, args.output_dir / path.name)
+    cache_path.parent.mkdir(parents=True, exist_ok=True)
+    cache_tmp = cache_path.with_suffix(".tmp")
+    cache_tmp.write_text(cache_json, encoding="utf-8")
+    os.replace(cache_tmp, cache_path)
     print("done", date.today())
 
 

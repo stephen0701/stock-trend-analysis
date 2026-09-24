@@ -281,7 +281,7 @@ function renderWatch(){
     const earn = (s.daysToEarnings!==null && s.daysToEarnings<=14) ? `<span class="earn-chip">⚠️ ${s.daysToEarnings} 天後財報</span>` : "";
     return `<div class="stock-row" onclick="renderDetail('${k}')">
       <div class="t-ico">${trendIcon[s.trend]}</div>
-      <div class="name"><b>${s.name}</b><span style="color:${trendColor[s.trend]}">${s.trendTerm}</span><small>報價日期 ${s.priceDate || s.dates[s.dates.length-1]}</small>${quoteWarning(s)}${earn}</div>
+      <div class="name"><b>${s.name}</b><span style="color:${trendColor[s.trend]}">${s.trendTerm}</span>${quoteWarning(s)}${earn}</div>
       <div class="px"><b>US$${last.toLocaleString()}</b><span class="pct ${cls}">${sign}${chg}%</span>${(s.dayHigh!=null&&s.dayLow!=null)?`<span class="hilo">高 ${s.dayHigh.toLocaleString()} / 低 ${s.dayLow.toLocaleString()}</span>`:""}</div>
     </div>`;
   }).join("");

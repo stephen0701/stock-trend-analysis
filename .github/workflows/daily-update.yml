@@ -34,8 +34,22 @@ jobs:
           python -m unittest discover -s tests -v
           node tests/test_frontend.cjs
 
+      - name: Restore verified Yahoo daily bars
+        uses: actions/cache/restore@v4
+        with:
+          path: data/raw/.cache
+          key: yahoo-verified-v1-${{ github.run_id }}-${{ github.run_attempt }}
+          restore-keys: yahoo-verified-v1-
+
       - name: Run daily pipeline
         run: python run_daily.py
+
+      - name: Save verified Yahoo daily bars
+        if: ${{ !cancelled() && hashFiles('data/raw/.cache/yahoo_verified.json') != '' }}
+        uses: actions/cache/save@v4
+        with:
+          path: data/raw/.cache
+          key: yahoo-verified-v1-${{ github.run_id }}-${{ github.run_attempt }}
 
       # 不再 commit 回 repo:資料每次部署時即時重產,避免與手動上傳衝突
 

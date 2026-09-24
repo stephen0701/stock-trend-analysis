@@ -13,6 +13,7 @@ function run(value, bad = true) {
  if(bad) for(const s of Object.values(context.window.APP_DATA.stocks)) {s.close[s.close.length-1]=value; s.dayHigh=value;}
  for(const s of Object.values(context.window.APP_DATA.stocks)) s.quoteStatus = {missingDates:['2026-09-22']};
  vm.runInContext(code, context);
+ assert(!elements.screen.innerHTML.includes('<small>報價日期'));
  if(!bad) assert(elements.screen.innerHTML.includes('行情未完整'));
  assert(!/NaN|非數值|Infinity/.test(elements.screen.innerHTML));
  if(bad) assert(elements.screen.innerHTML.includes('暫不判定趨勢'));
