@@ -9,12 +9,14 @@ import argparse
 import json
 from pathlib import Path
 import tempfile
+import time
 from datetime import date
 
 import pandas as pd
 import numpy as np
 from price_validation import COLUMNS, normalize, validate_prices
 from yahoo_history import restore_history
+from trading_session import expected_session, require_session
 
 
 def repair_yahoo_history(history, latest, metadata, now=None, records=None):
@@ -77,6 +79,28 @@ def fetch_yfinance(ticker, verified=None):
     return result
 
 
+def save_verified(path, verified):
+    path.parent.mkdir(parents=True, exist_ok=True)
+    temporary = path.with_suffix(".tmp")
+    temporary.write_text(json.dumps(verified, allow_nan=False), encoding="utf-8")
+    os.replace(temporary, path)
+
+
+def fetch_with_retries(fetch, expected, attempts=3, sleep=time.sleep):
+    for attempt in range(1, attempts + 1):
+        try:
+            frame = validate_prices(fetch())
+            require_session(frame, expected)
+            if len(frame) < 65:
+                raise ValueError("Insufficient history")
+            return frame
+        except Exception as error:
+            print(f"Quote attempt {attempt}/{attempts} failed: {error}", flush=True)
+            if attempt == attempts:
+                raise
+            sleep(20 * attempt)
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--provider", choices=["yahoo", "tiingo"], default="yahoo")
@@ -89,24 +113,25 @@ def main():
         cached = json.loads(cache_path.read_text(encoding="utf-8"))
         for ticker, records in cached.items():
             verified.setdefault(ticker, {}).update(records)
+    expected = expected_session()
+    print(f"Required completed US session: {expected}", flush=True)
     results, status = {}, {}
     for ticker in WATCHLIST + [BENCHMARK]:
         source = "yahoo" if ticker == BENCHMARK else args.provider
         if source == "tiingo":
             from tiingo_prices import fetch_tiingo
-            df = fetch_tiingo(ticker, START)
+            fetch = lambda: fetch_tiingo(ticker, START)
         else:
-            df = fetch_yfinance(ticker, verified)
-        df = validate_prices(df)
-        if len(df) < 65:
-            raise ValueError(f"{ticker}: insufficient history")
+            fetch = lambda: fetch_yfinance(ticker, verified)
+        df = fetch_with_retries(fetch, expected)
+        # Preserve successful tickers even if a later request fails.
+        save_verified(cache_path, verified)
         name = ticker.replace("^", "")
         results[name] = df
         status[name] = {"source":source, "priceDate":df.index[-1].strftime("%Y-%m-%d")}
         print(f"[{ticker}] {source}: {len(df)} rows; latest {status[name]['priceDate']}")
     if len({s["priceDate"] for s in status.values()}) != 1:
         raise ValueError("Stocks and benchmark have different latest dates; no files replaced")
-    cache_json = json.dumps(verified, allow_nan=False)
     args.output_dir.mkdir(parents=True, exist_ok=True)
     with tempfile.TemporaryDirectory(dir=args.output_dir) as tmp:
         tmp = Path(tmp)
@@ -115,10 +140,6 @@ def main():
         (tmp / "price_status.json").write_text(json.dumps(status, allow_nan=False), encoding="utf-8")
         for path in tmp.iterdir():
             os.replace(path, args.output_dir / path.name)
-    cache_path.parent.mkdir(parents=True, exist_ok=True)
-    cache_tmp = cache_path.with_suffix(".tmp")
-    cache_tmp.write_text(cache_json, encoding="utf-8")
-    os.replace(cache_tmp, cache_path)
     print("done", date.today())
 
 

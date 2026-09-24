@@ -2,10 +2,11 @@ name: daily-update
 
 on:
   schedule:
-    # UTC 22:00 = 台灣時間早上 6:00(美股已收盤)。週二~週六對應美股週一~週五交易日
+    # 台灣週二至週六 06:17：美股收盤後更新（UTC 前一天 22:17）。
     - cron: "17 22 * * 1-5"
-    # 台灣週二至週六 10:17 再更新，補抓來源延遲的收盤資料
+    # 台灣週二至週六 10:17：自動補抓來源延遲行情。
     - cron: "17 2 * * 2-6"
+    # 交易日曆決定最近已收盤交易日；美國休市不要求不存在的報價。
   push:
     branches: [main]      # 每次 push 到 main 也會自動部署
   workflow_dispatch: {}   # 也可在 GitHub 網頁上手動觸發
@@ -15,10 +16,15 @@ permissions:
   pages: write
   id-token: write
 
+# Serialize the entire build/deploy so an older run cannot overwrite a newer one.
+concurrency:
+  group: daily-pages
+  cancel-in-progress: false
+
 jobs:
   update-and-deploy:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
 
@@ -27,7 +33,7 @@ jobs:
           python-version: "3.11"
 
       - name: Install dependencies
-        run: pip install yfinance pandas
+        run: pip install -r requirements.txt
 
       - name: Regression tests
         run: |
