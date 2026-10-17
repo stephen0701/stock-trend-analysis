@@ -1,57 +1,124 @@
-# GitHub 雲端自動更新 + 手機使用教學(一次設定,終身自動)
+# Local setup, automation, and deployment
 
-完成後:每個交易日台灣時間早上 6 點,雲端自動更新資料;
-你手機打開網址就是最新內容,完全不需要開自己的電腦。
+[README](../README.md) · [Architecture](ARCHITECTURE.md) · [Validation](VALIDATION.md)
 
-## 第一步:建立 GitHub 帳號與 Repo(約 5 分鐘)
+## Prerequisites
 
-1. 到 https://github.com 註冊帳號(免費)
-2. 右上角「+」→「New repository」
-   - Repository name: `stock-trend-companion`
-   - 選 **Public**(Pages 免費版需要公開;介意的話可改用 Private + 付費方案)
-   - 按「Create repository」
+- Git to clone the repository.
+- Python **3.11**, matching the Actions runtime, for refreshes and Python tests.
+- Node.js for `tests/test_frontend.cjs`; no npm packages are required.
+- A browser and internet access for the Chart.js CDN and external data providers.
 
-## 第二步:上傳整個專案資料夾
+Previewing the saved application does not require installing Python packages. Refreshing it requires `requirements.txt`. The default Yahoo path requires no API token.
 
-最簡單方法(網頁拖拉):
-1. 在剛建立的 repo 頁面點「uploading an existing file」
-2. 把 `stock_trend_analysis` 資料夾裡的**所有內容**拖進去
-   (包含隱藏的 `.github` 資料夾——若拖不進去,見下方「命令列方法」)
-3. 按「Commit changes」
+## Clone and preview
 
-命令列方法(需安裝 git):
-```
-cd C:\Users\USER\Desktop\stock_trend_analysis
-git init
-git add .
-git commit -m "init"
-git branch -M main
-git remote add origin https://github.com/<你的帳號>/stock-trend-companion.git
-git push -u origin main
+```bash
+git clone https://github.com/stephen0701/stock-trend-analysis.git
+cd stock-trend-analysis
+python -m http.server 8000 --directory app
 ```
 
-## 第三步:啟用 GitHub Pages 與 Actions(約 2 分鐘)
+Open http://localhost:8000/ and stop the server with `Ctrl+C` when finished. Opening `app/index.html` directly also works with its script-based payload loading. Browser storage is specific to the origin, so holdings entered on localhost will not be shared with the live Pages site.
 
-1. Repo 頁面 → Settings → Pages → Source 選 **GitHub Actions**
-2. Repo 頁面 → Actions → 若出現啟用提示,按「I understand, enable them」
-3. Actions → 左側選「daily-update」→ 右側「Run workflow」手動跑第一次
-4. 等 2~3 分鐘跑完(綠色勾勾),Pages 網址就生效:
-   `https://<你的帳號>.github.io/stock-trend-companion/`
+`app/data.js` and the files under `data/` are committed snapshots. They can be older than the live site because the deployment workflow regenerates data without committing it. Stale-data warnings during a local preview are expected when the snapshot is old. Do not run just the builder to make an old snapshot appear freshly acquired.
 
-## 第四步:手機加入主畫面(像 App 一樣用)
+## Install the pipeline dependencies
 
-- iPhone:Safari 開啟網址 → 分享按鈕 → 「加入主畫面」
-- Android:Chrome 開啟網址 → 右上選單 → 「加到主畫面」
+Keep the environment outside the repository so it cannot be included accidentally in a commit. Run these commands from the repository root.
 
-## 之後會自動發生的事
+**Windows PowerShell:**
 
-- 週二~週六台灣時間早上 6:00(美股收盤後),雲端自動執行 run_daily.py
-- 更新的資料自動 commit 回 repo 並重新部署 Pages
-- 你手機打開就是最新;App 頂部會顯示「資料更新」時間可以核對
+```powershell
+py -3.11 -m venv ..\stock-trend-analysis-venv
+..\stock-trend-analysis-venv\Scripts\python.exe -m pip install -r requirements.txt
+..\stock-trend-analysis-venv\Scripts\python.exe run_daily.py
+```
 
-## 常見問題
+The `py` command is the Windows Python launcher. If it is unavailable, use the path to your Python 3.11 interpreter to create the environment. Invoking the environment's executable directly avoids changing PowerShell execution policy.
 
-- **想改追蹤的股票**:改四支 pipeline 程式裡的 WATCHLIST 與 INFO,push 上去即可
-- **想改更新時間**:改 `.github/workflows/daily-update.yml` 裡的 cron(UTC 時間)
-- **Actions 失敗**:大多是 Yahoo 暫時擋爬蟲,隔天會自動恢復;也可手動 Run workflow 重試
-- **免費額度**:GitHub Actions 公開 repo 完全免費,本工作每天約 1 分鐘,遠低於限制
+**macOS/Linux:**
+
+```bash
+python3.11 -m venv ../stock-trend-analysis-venv
+source ../stock-trend-analysis-venv/bin/activate
+python -m pip install -r requirements.txt
+python run_daily.py
+```
+
+**Windows Command Prompt alternative:** activate `..\stock-trend-analysis-venv\Scripts\activate.bat`, then run `python run_daily.py` or `run_daily.bat` from the repository root. The batch launcher uses whichever `python` is on `PATH`; install dependencies into that environment first.
+
+## What a refresh changes
+
+`run_daily.py` invokes these scripts with the same interpreter, in order:
+
+| Stage | Inputs/source | Outputs |
+| --- | --- | --- |
+| `pipeline/fetch_prices.py` | Yahoo daily quotes, NYSE calendar, verified records | `data/raw/{NVDA,GOOG,LLY,DRAM,GSPC}.csv`, `data/raw/price_status.json`, and the ignored verified-bar cache. |
+| `pipeline/fetch_events.py` | Price CSVs and Yahoo news | `data/processed/events.json`. |
+| `pipeline/fetch_fundamentals.py` | Yahoo metadata and earnings calendar | `data/processed/fundamentals.json`. |
+| `pipeline/build_app_data.py` | Price CSVs, processed JSON, optional price status | `app/data.js`. |
+
+A failure stops later stages. Successful earlier local stages can already have replaced their outputs; there is no rollback of the entire local run. Check the terminal exit status before treating a refresh as complete. Reload the browser after a successful run. A refresh changes saved data files, so review `git status` before committing unrelated work.
+
+To rebuild only the payload from existing files, use `python pipeline/build_app_data.py`. This does not fetch data or verify the latest completed session. Its output should not be used as evidence of a successful market-data refresh.
+
+## Run the existing tests
+
+Use the environment's Python executable, or activate the environment first:
+
+```bash
+python -m unittest discover -s tests -v
+node tests/test_frontend.cjs
+```
+
+Tests use fixtures, mocks, temporary files, and the committed frontend payload. They do not require provider credentials or fetch live quotes. See [validation](VALIDATION.md) for their coverage and limitations.
+
+## Existing GitHub Actions workflow
+
+The workflow file is [`.github/workflows/daily-update.yml`](../.github/workflows/daily-update.yml). Its name is `daily-update`.
+
+| Setting | Current value |
+| --- | --- |
+| Scheduled triggers | `17 22 * * 1-5` and `17 2 * * 2-6`, in UTC. |
+| Taiwan schedule | Tuesday–Saturday at 06:17 and 10:17 (UTC+8). |
+| Other triggers | Push to `main`; manual `workflow_dispatch`. A pull request alone does not trigger this workflow. |
+| Runner/runtime | `ubuntu-latest`; Python 3.11 through `actions/setup-python@v5`; Node.js supplied by the runner. |
+| Permissions | `contents: read`, `pages: write`, `id-token: write`. |
+| Concurrency | One `daily-pages` group across build and deploy; `cancel-in-progress: false`. |
+| Timeouts | 30 minutes for `update-and-deploy`; 15 minutes for the dependent `deploy` job. |
+| Published directory | `app/`, uploaded by `actions/upload-pages-artifact@v3`. |
+| Deployment | `actions/deploy-pages@v4` to the `github-pages` environment. |
+
+The build job checks out source with `actions/checkout@v4`, installs `requirements.txt`, runs both regression commands, restores the verified-bar cache, and runs the daily pipeline. It attempts to save the cache when the run has not been cancelled and `yahoo_verified.json` exists, including after a pipeline failure. This preserves successful ticker records when a later request fails. Only a successful pipeline reaches artifact upload and the dependent deployment.
+
+Cache keys include `github.run_id` and `github.run_attempt`; restoration uses the `yahoo-verified-v1-` prefix. The cache is separate from Git history and can be evicted. It does not replace the seed or guarantee recovery for every historical gap.
+
+Generated CSV, JSON, and `data.js` changes exist in the runner workspace and deployed artifact. **They are not pushed back to `main`.** A workflow run can therefore deploy data newer than the files visible in the repository.
+
+GitHub schedules can start late, and public repositories can have scheduled workflows disabled after prolonged inactivity. Monitor Actions rather than assuming an exact start time or permanent operation. The NYSE calendar, rather than the weekday cron alone, determines the required completed session.
+
+## Inspect the deployment
+
+- [Live application](https://stephen0701.github.io/stock-trend-analysis/)
+- [Workflow history](https://github.com/stephen0701/stock-trend-analysis/actions/workflows/daily-update.yml)
+
+For the existing repository, use the current configuration. No settings changes are needed to view the live demo or run the application locally.
+
+For an independently maintained fork or copy, configure **Settings → Pages → Build and deployment → Source → GitHub Actions**, and ensure Actions and the `github-pages` environment permit deployment from its default branch. The existing workflow listens for pushes to `main`; a different default branch requires an intentional workflow change in that separate copy. Its Pages URL depends on its owner and repository name. A manual run is available under **Actions → daily-update → Run workflow** when an update is intended.
+
+Adding the page to a phone's home screen is a browser shortcut. The repository has no service worker or web app manifest providing offline installation.
+
+## Troubleshooting
+
+| Symptom | What to inspect |
+| --- | --- |
+| `ModuleNotFoundError` | Install requirements with the same interpreter used to run the pipeline. |
+| Quote attempts fail | Read the fetch-stage error: connectivity, date mismatch, unresolved gaps, or price validation can stop publication. The script tries at most three times per ticker. A later schedule is another attempt, not guaranteed recovery. |
+| Site still has an older generation time | Check both build and deploy jobs. A failed required stage leaves the previous deployment available. |
+| Local data is old | The committed payload is a snapshot. Run the complete pipeline for a validated refresh; a rebuilt timestamp alone does not establish freshness. |
+| News/fundamentals are empty | These requests can degrade to empty fields without failing the price pipeline. Check stage logs and provider availability. |
+| Chart is missing | Check that the Chart.js CDN is reachable; the script is not vendored locally. |
+| Holdings differ between devices | Holdings use browser-local storage, with no account sync or remote backup. |
+
+The watchlist is defined in each of the three fetch stages and in `INFO` in `build_app_data.py`. Changing coverage requires coordinated code/data validation, especially for new or short-history tickers; it is not a runtime configuration feature.
